@@ -1,0 +1,29 @@
+name: MLOps CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  airflow_job:
+    name: Airflow DAG Sync
+    runs-on: ubuntu-latest
+    if: |
+      contains(join(github.event.commits.*.modified, ','), 'airflow/') ||
+      contains(join(github.event.commits.*.added, ','), 'airflow/')
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Sync DAGs to Airflow server via rsync
+        env:
+          SSH_KEY: ${{ secrets.AIRFLOW_SSH_KEY }}
+          AIRFLOW_HOST: ${{ secrets.AIRFLOW_HOST }}
+        run: |
+          echo "$SSH_KEY" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+          rsync -avz -e "ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no" \
+            airflow/ \
+            root@$AIRFLOW_HOST:/home/airflow/airflowServer/dags/
