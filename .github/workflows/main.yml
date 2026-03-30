@@ -3,16 +3,13 @@ name: MLOps CI/CD Pipeline
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+    paths:
+      - 'airflow/**'
 
 jobs:
   airflow_job:
     name: Airflow DAG Sync
     runs-on: ubuntu-latest
-    if: |
-      contains(join(github.event.commits.*.modified, ','), 'airflow/') ||
-      contains(join(github.event.commits.*.added, ','), 'airflow/')
 
     steps:
       - uses: actions/checkout@v3
