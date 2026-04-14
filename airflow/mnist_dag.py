@@ -44,7 +44,7 @@ def train_model(**kwargs):
         download=True,
         transform=transform
     )
-    train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
+    train_loader = DataLoader(train_ds, batch_size=32, shuffle=True)
 
     # Initialize model, loss function and optimizer
     model = DeepNN()
@@ -52,7 +52,7 @@ def train_model(**kwargs):
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     # Training loop
-    for epoch in range(10):
+    for epoch in range(1):
         total_loss = 0
         for images, labels in train_loader:
             optimizer.zero_grad()
