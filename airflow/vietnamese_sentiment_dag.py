@@ -9,31 +9,46 @@ default_args = {
 
 
 def load_data(**kwargs):
-    import pandas as pd
     from datasets import load_dataset
+    import pandas as pd
+    import os
 
-    print("Loading UIT-VSFC dataset from HuggingFace...")
-    
+    print("Loading UIT-VSFC dataset...")
+
     try:
-        dataset = load_dataset("uitnlp/vietnamese_students_feedback", split="train")
-        df = dataset.to_pandas()
-        
-        print(f"Loaded {len(df)} rows. Columns: {df.columns.tolist()}")
-        
-        sample_df = df.groupby('sentiment').apply(
-            lambda x: x.sample(min(len(x), 167), random_state=42)
-        ).reset_index(drop=True).head(500)
+        # Load dataset
+        ds = load_dataset("uitnlp/vietnamese_students_feedback", split="train")
+        df = ds.to_pandas()
 
-        output_path = '/tmp/vsfc_sample.csv'
+        print(f"Loaded {len(df)} rows")
+
+        # Validate columns
+        required_cols = {"sentence", "sentiment"}
+        if not required_cols.issubset(df.columns):
+            raise ValueError(f"Missing columns: {required_cols - set(df.columns)}")
+
+        # Sampling balanced data
+        sample_df = (
+            df.groupby("sentiment", group_keys=False)
+              .apply(lambda x: x.sample(min(len(x), 167), random_state=42))
+              .reset_index(drop=True)
+        )
+
+        print(f"Sampled {len(sample_df)} rows")
+
+        # Save to file
+        output_path = "/tmp/vsfc_sample.csv"
         sample_df.to_csv(output_path, index=False)
 
-        ti = kwargs['ti']
-        ti.xcom_push(key='data_path', value=output_path)
-        print(f"Successfully prepared {len(sample_df)} samples.")
+        # Push to XCom
+        ti = kwargs["ti"]
+        ti.xcom_push(key="data_path", value=output_path)
+
+        print(f"Saved to {output_path}")
 
     except Exception as e:
-        print(f"Error: {e}")
-        raise e
+        print(f"[ERROR] {e}")
+        raise
 
 def predict_sentiment(**kwargs):
     from transformers import pipeline
