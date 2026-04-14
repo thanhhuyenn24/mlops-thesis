@@ -10,34 +10,34 @@ default_args = {
 
 def load_data(**kwargs):
     import pandas as pd
-    import requests
+    from huggingface_hub import hf_hub_download
     import os
 
-    url = "https://huggingface.co/datasets/uitnlp/vietnamese_students_feedback/resolve/main/data/train-00000-of-00001.parquet"
-    local_path = "/tmp/vsfc_data.parquet"
+    print("Downloading dataset using huggingface_hub...")
+    try:
+        file_path = hf_hub_download(
+            repo_id="uitnlp/vietnamese_students_feedback",
+            filename="data/train-00000-of-00001.parquet",
+            repo_type="dataset"
+        )
+        
+        print(f"File downloaded at: {file_path}")
+        df = pd.read_parquet(file_path)
 
-    print(f"Downloading dataset from {url}...")
-    
-    response = requests.get(url, stream=True)
-    if response.status_code == 200:
-        with open(local_path, 'wb') as f:
-            f.write(response.content)
-        print("Download finished.")
-    else:
-        raise Exception(f"Failed to download dataset. Status code: {response.status_code}")
+        sample_df = df.groupby('sentiment').apply(
+            lambda x: x.sample(min(len(x), 167), random_state=42)
+        ).reset_index(drop=True).head(500)
 
-    df = pd.read_parquet(local_path)
-
-    sample_df = df.groupby('sentiment').apply(
-        lambda x: x.sample(min(len(x), 167), random_state=42)
-    ).reset_index(drop=True).head(500)
-
-    output_path = '/tmp/vsfc_sample.csv'
-    sample_df.to_csv(output_path, index=False)
-    
-    ti = kwargs['ti']
-    ti.xcom_push(key='data_path', value=output_path)
-    print(f"Successfully prepared {len(sample_df)} samples.")
+        output_path = '/tmp/vsfc_sample.csv'
+        sample_df.to_csv(output_path, index=False)
+        
+        ti = kwargs['ti']
+        ti.xcom_push(key='data_path', value=output_path)
+        print("Successfully prepared 500 samples.")
+        
+    except Exception as e:
+        print(f"Error details: {e}")
+        raise e
 
 
 def predict_sentiment(**kwargs):
