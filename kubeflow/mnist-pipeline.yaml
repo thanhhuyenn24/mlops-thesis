@@ -4,6 +4,9 @@ metadata:
   generateName: mnist-classification-
 spec:
   entrypoint: mnist-pipeline
+  executor:
+    image: quay.io/argoproj/argoexec:v3.4.17
+  
   templates:
     - name: mnist-pipeline
       dag:
@@ -13,6 +16,10 @@ spec:
           - name: evaluate-model
             template: evaluate-model
             dependencies: [train-model]
+            arguments:
+              artifacts:
+                - name: model-file
+                  from: "{{tasks.train-model.outputs.artifacts.model-artifact}}"
 
     - name: train-model
       container:
@@ -25,8 +32,8 @@ spec:
             import torch.optim as optim
             from torchvision import datasets, transforms
             from torch.utils.data import DataLoader
+            import os
 
-            # DeepNN model
             class DeepNN(nn.Module):
                 def __init__(self):
                     super(DeepNN, self).__init__()
@@ -36,7 +43,6 @@ spec:
                     self.fc4 = nn.Linear(128, 10)
                     self.dropout = nn.Dropout(0.3)
                     self.relu = nn.ReLU()
-
                 def forward(self, x):
                     x = x.view(-1, 784)
                     x = self.relu(self.fc1(x))
@@ -47,16 +53,15 @@ spec:
                     x = self.fc4(x)
                     return x
 
-            # Load MNIST dataset
             transform = transforms.Compose([transforms.ToTensor()])
-            train_ds = datasets.MNIST(root='/tmp/mnist', train=True, download=True, transform=transform)
+            train_ds = datasets.MNIST(root='/tmp/data', train=True, download=True, transform=transform)
             train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
 
-            # Train
             model = DeepNN()
             criterion = nn.CrossEntropyLoss()
             optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+            print("Starting training...")
             for epoch in range(3):
                 total_loss = 0
                 for images, labels in train_loader:
@@ -66,16 +71,22 @@ spec:
                     loss.backward()
                     optimizer.step()
                     total_loss += loss.item()
-                avg_loss = total_loss / len(train_loader)
-                print(f"Epoch {epoch+1}, Loss: {avg_loss:.4f}")
+                print(f"Epoch {epoch+1}, Loss: {total_loss / len(train_loader):.4f}")
 
-            # Save model
             torch.save(model.state_dict(), '/tmp/mnist_model.pth')
-            print("Model saved to /tmp/mnist_model.pth")
+            print("Model saved successfully.")
+      outputs:
+        artifacts:
+          - name: model-artifact
+            path: /tmp/mnist_model.pth
 
     - name: evaluate-model
+      inputs:
+        artifacts:
+          - name: model-file
+            path: /tmp/input_model.pth
       container:
-        image: pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+        image: pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
         command: [python, -c]
         args:
           - |
@@ -93,7 +104,6 @@ spec:
                     self.fc4 = nn.Linear(128, 10)
                     self.dropout = nn.Dropout(0.3)
                     self.relu = nn.ReLU()
-
                 def forward(self, x):
                     x = x.view(-1, 784)
                     x = self.relu(self.fc1(x))
@@ -104,22 +114,14 @@ spec:
                     x = self.fc4(x)
                     return x
 
-            # Load test data
-            transform = transforms.Compose([transforms.ToTensor()])
-            test_ds = datasets.MNIST(root='/tmp/mnist', train=False, download=True, transform=transform)
+            test_ds = datasets.MNIST(root='/tmp/data', train=False, download=True, transform=transforms.ToTensor())
             test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
 
-            # Evaluate
             model = DeepNN()
-            try:
-                model.load_state_dict(torch.load('/tmp/mnist_model.pth'))
-                print("Model loaded successfully")
-            except:
-                print("Model file not found, using random weights")
-
+            model.load_state_dict(torch.load('/tmp/input_model.pth'))
             model.eval()
-            correct = 0
-            total = 0
+
+            correct, total = 0, 0
             with torch.no_grad():
                 for images, labels in test_loader:
                     outputs = model(images)
@@ -127,5 +129,4 @@ spec:
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
 
-            accuracy = 100 * correct / total
-            print(f"Test Accuracy: {accuracy:.2f}%")
+            print(f"Final Test Accuracy: {100 * correct / total:.2f}%")
