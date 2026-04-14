@@ -10,34 +10,25 @@ default_args = {
 
 def load_data(**kwargs):
     import pandas as pd
-    from huggingface_hub import hf_hub_download
+    from datasets import load_dataset
     import os
 
-    print("Downloading dataset using huggingface_hub...")
-    try:
-        file_path = hf_hub_download(
-            repo_id="uitnlp/vietnamese_students_feedback",
-            filename="data/train-00000-of-00001.parquet",
-            repo_type="dataset"
-        )
-        
-        print(f"File downloaded at: {file_path}")
-        df = pd.read_parquet(file_path)
+    print("Loading dataset: uitnlp/vietnamese_students_feedback")
+    
+    dataset = load_dataset("uitnlp/vietnamese_students_feedback", split="train", trust_remote_code=True)
+    
+    df = dataset.to_pandas()
 
-        sample_df = df.groupby('sentiment').apply(
-            lambda x: x.sample(min(len(x), 167), random_state=42)
-        ).reset_index(drop=True).head(500)
+    sample_df = df.groupby('sentiment').apply(
+        lambda x: x.sample(min(len(x), 167), random_state=42)
+    ).reset_index(drop=True).head(500)
 
-        output_path = '/tmp/vsfc_sample.csv'
-        sample_df.to_csv(output_path, index=False)
-        
-        ti = kwargs['ti']
-        ti.xcom_push(key='data_path', value=output_path)
-        print("Successfully prepared 500 samples.")
-        
-    except Exception as e:
-        print(f"Error details: {e}")
-        raise e
+    output_path = '/tmp/vsfc_sample.csv'
+    sample_df.to_csv(output_path, index=False)
+    
+    ti = kwargs['ti']
+    ti.xcom_push(key='data_path', value=output_path)
+    print(f"Successfully loaded {len(sample_df)} samples to {output_path}")
 
 
 def predict_sentiment(**kwargs):
