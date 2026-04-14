@@ -13,7 +13,7 @@ def load_data(**kwargs):
     import pandas as pd
 
     print("Loading UIT-VSFC dataset from HuggingFace...")
-    dataset = load_dataset("uitnlp/UIT-VSFC")
+    dataset = load_dataset("uitnlp/vietnamese_students_feedback")
 
     # Stratified sampling - 500 samples as defined in the use case
     train_df = dataset['train'].to_pandas()
