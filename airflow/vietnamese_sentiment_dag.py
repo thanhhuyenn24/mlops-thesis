@@ -9,24 +9,19 @@ default_args = {
 
 
 def load_data(**kwargs):
-    from datasets import load_dataset
     import pandas as pd
 
-    print("Loading UIT-VSFC dataset from HuggingFace...")
-    dataset = load_dataset("uitnlp/vietnamese_students_feedback", trust_remote_code=True)
+    print("Loading UIT-VSFC dataset via Parquet format...")
+    path = "hf://datasets/uitnlp/vietnamese_students_feedback/data/train-00000-of-00001.parquet"
+    df = pd.read_parquet(path)
 
-    # Stratified sampling - 500 samples as defined in the use case
-    train_df = dataset['train'].to_pandas()
-    sample_df = train_df.groupby('sentiment').apply(
+    sample_df = df.groupby('sentiment').apply(
         lambda x: x.sample(min(len(x), 167), random_state=42)
     ).reset_index(drop=True).head(500)
 
-    # Save sampled data to temporary storage
     sample_df.to_csv('/tmp/vsfc_sample.csv', index=False)
-    print(f"Loaded {len(sample_df)} samples")
-    print(f"Label distribution:\n{sample_df['sentiment'].value_counts()}")
+    print(f"Loaded {len(sample_df)} samples successfully.")
 
-    # Pass data path to next task via XCom
     ti = kwargs['ti']
     ti.xcom_push(key='data_path', value='/tmp/vsfc_sample.csv')
 
