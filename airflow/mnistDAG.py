@@ -1,12 +1,12 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
-import os
 
 default_args = {
     'owner': 'airflow',
     'start_date': datetime(2024, 1, 1),
 }
+
 
 def train_model(**kwargs):
     import torch
@@ -15,7 +15,7 @@ def train_model(**kwargs):
     from torchvision import datasets, transforms
     from torch.utils.data import DataLoader
 
-    # DeepNN model - đúng theo paper
+    # DeepNN architecture as defined in the paper
     class DeepNN(nn.Module):
         def __init__(self):
             super(DeepNN, self).__init__()
@@ -36,7 +36,7 @@ def train_model(**kwargs):
             x = self.fc4(x)
             return x
 
-    # Load MNIST dataset
+    # Load and preprocess MNIST dataset
     transform = transforms.Compose([transforms.ToTensor()])
     train_ds = datasets.MNIST(
         root='/tmp/mnist_data',
@@ -46,11 +46,12 @@ def train_model(**kwargs):
     )
     train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
 
-    # Train model
+    # Initialize model, loss function and optimizer
     model = DeepNN()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+    # Training loop
     for epoch in range(10):
         total_loss = 0
         for images, labels in train_loader:
@@ -63,12 +64,12 @@ def train_model(**kwargs):
         avg_loss = total_loss / len(train_loader)
         print(f"Epoch {epoch+1}, Loss: {avg_loss:.4f}")
 
-    # Save model
+    # Save trained model to temporary storage
     model_path = '/tmp/mnist_model.pth'
     torch.save(model.state_dict(), model_path)
     print(f"Model saved to {model_path}")
 
-    # Pass model path sang evaluate_model qua XCom - đúng theo paper
+    # Pass model path to evaluate task via XCom
     ti = kwargs['ti']
     ti.xcom_push(key='model_path', value=model_path)
 
@@ -79,6 +80,7 @@ def evaluate_model(**kwargs):
     from torchvision import datasets, transforms
     from torch.utils.data import DataLoader
 
+    # DeepNN architecture must match training definition
     class DeepNN(nn.Module):
         def __init__(self):
             super(DeepNN, self).__init__()
@@ -99,5 +101,56 @@ def evaluate_model(**kwargs):
             x = self.fc4(x)
             return x
 
+    # Retrieve model path from XCom
     ti = kwargs['ti']
-    model
+    model_path = ti.xcom_pull(key='model_path', task_ids='train_model')
+
+    # Load and preprocess MNIST test dataset
+    transform = transforms.Compose([transforms.ToTensor()])
+    test_ds = datasets.MNIST(
+        root='/tmp/mnist_data',
+        train=False,
+        download=True,
+        transform=transform
+    )
+    test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
+
+    # Load trained model weights
+    model = DeepNN()
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+
+    # Evaluate model accuracy on test set
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for images, labels in test_loader:
+            outputs = model(images)
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    accuracy = 100 * correct / total
+    print(f"Test Accuracy: {accuracy:.2f}%")
+
+
+with DAG(
+    dag_id='mnist_classification_airflow',
+    default_args=default_args,
+    description='Train and evaluate MNIST with PyTorch (DeepNN)',
+    schedule_interval=None,
+    catchup=False,
+    tags=['mnist', 'pytorch'],
+) as dag:
+
+    t1 = PythonOperator(
+        task_id='train_model',
+        python_callable=train_model,
+    )
+
+    t2 = PythonOperator(
+        task_id='evaluate_model',
+        python_callable=evaluate_model,
+    )
+
+    t1 >> t2
