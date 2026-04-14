@@ -85,7 +85,7 @@ def predict_sentiment(**kwargs):
             print(f"INFO: Inference progress: Processed {i+1}/{len(texts)} samples.")
 
     # Translate the predicted text labels into integer IDs to compute the evaluation metric
-    label_map = {'NEG': 0, 'POS': 1, 'NEU': 2}
+    label_map = {'NEG': 0, 'NEU': 1, 'POS': 2}
     pred_ids = [label_map.get(p, -1) for p in preds]
     correct = sum(p == l for p, l in zip(pred_ids, labels))
     accuracy = 100 * correct / len(labels)
