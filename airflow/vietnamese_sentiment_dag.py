@@ -10,31 +10,27 @@ default_args = {
 
 def load_data(**kwargs):
     import pandas as pd
-    import requests
-    import io
+    from datasets import load_dataset
 
-    print("Loading dataset via direct CSV link...")
-    url = "https://huggingface.co/datasets/uitnlp/vietnamese_students_feedback/resolve/main/default/train/index.csv"
+    print("Loading UIT-VSFC dataset from HuggingFace...")
     
     try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            df = pd.read_csv(io.StringIO(response.text))
-            print(f"Downloaded {len(df)} rows.")
-        else:
-            df = pd.read_csv("https://raw.githubusercontent.com/uitnlp/vietnamese-sentiment-analysis/master/dataset/train.csv")
-
+        dataset = load_dataset("uitnlp/vietnamese_students_feedback", split="train")
+        df = dataset.to_pandas()
+        
+        print(f"Loaded {len(df)} rows. Columns: {df.columns.tolist()}")
+        
         sample_df = df.groupby('sentiment').apply(
             lambda x: x.sample(min(len(x), 167), random_state=42)
         ).reset_index(drop=True).head(500)
 
         output_path = '/tmp/vsfc_sample.csv'
         sample_df.to_csv(output_path, index=False)
-        
+
         ti = kwargs['ti']
         ti.xcom_push(key='data_path', value=output_path)
-        print("Successfully prepared 500 samples.")
-        
+        print(f"Successfully prepared {len(sample_df)} samples.")
+
     except Exception as e:
         print(f"Error: {e}")
         raise e
