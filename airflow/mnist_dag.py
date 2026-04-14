@@ -113,7 +113,7 @@ def evaluate_model(**kwargs):
         download=True,
         transform=transform
     )
-    test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
+    test_loader = DataLoader(test_ds, batch_size=32, shuffle=False)
 
     # Load trained model weights
     model = DeepNN()
