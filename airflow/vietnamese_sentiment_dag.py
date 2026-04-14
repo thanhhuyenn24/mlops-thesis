@@ -13,48 +13,48 @@ def load_data(**kwargs):
     import pandas as pd
     import os
 
-    print("Loading UIT-VSFC dataset...")
+    print("INFO: Initiating extraction of the UIT-VSFC dataset.")
 
     try:
-        # Load dataset
+        # Fetch the training split of the Vietnamese Students' Feedback Corpus (UIT-VSFC)
         ds = load_dataset("uitnlp/vietnamese_students_feedback", split="train")
         df = ds.to_pandas()
 
-        print(f"Loaded {len(df)} rows")
+        print(f"INFO: Successfully retrieved {len(df)} records from the source dataset.")
 
-        # Validate columns
+        # Ensure all strictly required columns exist prior to downstream processing
         required_cols = {"sentence", "sentiment"}
         if not required_cols.issubset(df.columns):
             raise ValueError(f"Missing columns: {required_cols - set(df.columns)}")
 
-        # Sampling balanced data
+        # Execute stratified sampling to maintain a balanced class distribution
         sample_df = (
             df.groupby("sentiment", group_keys=False)
               .apply(lambda x: x.sample(min(len(x), 167), random_state=42))
               .reset_index(drop=True)
         )
 
-        print(f"Sampled {len(sample_df)} rows")
+        print(f"INFO: Dataset successfully downsampled to {len(sample_df)} records.")
 
-        # Save to file
+        # Persist the sampled dataframe to local storage for inter-task communication
         output_path = "/tmp/vsfc_sample.csv"
         sample_df.to_csv(output_path, index=False)
 
-        # Push to XCom
+        # Register the file path in Airflow XCom for the subsequent inference task
         ti = kwargs["ti"]
         ti.xcom_push(key="data_path", value=output_path)
 
-        print(f"Saved to {output_path}")
+        print(f"INFO: Sampled dataset successfully persisted to {output_path}")
 
     except Exception as e:
-        print(f"[ERROR] {e}")
+        print(f"CRITICAL: Data loading pipeline encountered an error: {e}")
         raise
 
 def predict_sentiment(**kwargs):
     from transformers import pipeline
     import pandas as pd
 
-    # Retrieve data path from XCom
+    # Retrieve the intermediate dataset filepath registered by the upstream task
     ti = kwargs['ti']
     data_path = ti.xcom_pull(key='data_path', task_ids='load_data')
 
@@ -62,8 +62,8 @@ def predict_sentiment(**kwargs):
     texts = df['sentence'].tolist()
     labels = df['sentiment'].tolist()
 
-    # Load pre-trained PhoBERT-based Vietnamese sentiment model
-    print("Loading PhoBERT model...")
+    # Initialize the PhoBERT-based text-classification pipeline for Vietnamese sentiment analysis
+    print("INFO: Initializing the Hugging Face PhoBERT sentiment analysis pipeline...")
     sentiment_pipeline = pipeline(
         "text-classification",
         model="wonrax/phobert-base-vietnamese-sentiment",
@@ -73,8 +73,8 @@ def predict_sentiment(**kwargs):
         max_length=256,
     )
 
-    # Run inference on all samples
-    print(f"Running inference on {len(texts)} samples...")
+    # Execute batch inference across the retrieved dataset
+    print(f"INFO: Commencing model inference on {len(texts)} text samples.")
     preds = []
     scores = []
     for i, txt in enumerate(texts):
@@ -82,18 +82,18 @@ def predict_sentiment(**kwargs):
         preds.append(result['label'])
         scores.append(result['score'])
         if (i + 1) % 50 == 0:
-            print(f"Processed {i+1}/{len(texts)} samples")
+            print(f"INFO: Inference progress: Processed {i+1}/{len(texts)} samples.")
 
-    # Map predicted labels to integer IDs for accuracy computation
+    # Translate the predicted text labels into integer IDs to compute the evaluation metric
     label_map = {'NEG': 0, 'POS': 1, 'NEU': 2}
     pred_ids = [label_map.get(p, -1) for p in preds]
     correct = sum(p == l for p, l in zip(pred_ids, labels))
     accuracy = 100 * correct / len(labels)
 
-    print(f"Accuracy: {accuracy:.2f}%")
-    print(f"Average confidence score: {sum(scores)/len(scores):.4f}")
+    print(f"INFO: Evaluation complete. Overall Model Accuracy: {accuracy:.2f}%")
+    print(f"INFO: Evaluation complete. Average Model Confidence Score: {sum(scores)/len(scores):.4f}")
 
-    # Pass accuracy to XCom for traceability
+    # Log the calculated evaluation metrics to XCom for pipeline observability
     ti.xcom_push(key='accuracy', value=accuracy)
 
 
