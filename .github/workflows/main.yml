@@ -5,12 +5,15 @@ on:
     branches: [main]
     paths:
       - 'airflow/**'
+      - 'kubeflow/**'
 
 jobs:
   airflow_job:
     name: Airflow DAG Sync
     runs-on: ubuntu-latest
-
+    if: |
+      contains(join(github.event.commits.*.modified, ','), 'airflow/') ||
+      contains(join(github.event.commits.*.added, ','), 'airflow/')
     steps:
       - uses: actions/checkout@v3
 
@@ -21,9 +24,68 @@ jobs:
         run: |
           echo "$SSH_KEY" > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
-          
+
           rsync -avz -e "ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no" \
             airflow/ \
             root@$AIRFLOW_HOST:/home/airflow/airflowServer/dags/
-            
-          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no root@$AIRFLOW_HOST "chown -R airflow:airflow /home/airflow/airflowServer/dags/"
+
+          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no \
+            root@$AIRFLOW_HOST \
+            "chown -R airflow:airflow /home/airflow/airflowServer/dags/"
+
+  kubeflow_job:
+    name: Kubeflow Pipeline Update
+    runs-on: ubuntu-latest
+    if: |
+      contains(join(github.event.commits.*.modified, ','), 'kubeflow/') ||
+      contains(join(github.event.commits.*.added, ','), 'kubeflow/')
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Detect changed Kubeflow files
+        id: changed
+        run: |
+          echo "Changed files in kubeflow/:"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+            | grep '^kubeflow/' || echo "(none)"
+
+      - name: Notify Kubeflow pipeline change
+        run: |
+          echo "=========================================="
+          echo "Kubeflow pipeline files updated."
+          echo "Cluster: OpenStack VM (not accessible from GitHub Actions)"
+          echo "Action required: manually re-run pipeline on KFP UI"
+          echo "  UC1 MNIST    : kubeflow/uc1_mnist/pipeline.py"
+          echo "  UC2 PhoBERT  : kubeflow/uc2_phobert/pipeline.py"
+          echo "=========================================="
+
+      - name: Install KFP SDK
+        run: pip install kfp==2.4.0
+
+      - name: Compile UC1 MNIST pipeline
+        if: contains(steps.changed.outputs.stdout, 'uc1_mnist') || true
+        run: |
+          cd kubeflow/uc1_mnist
+          python3 pipeline.py
+          echo "UC1 compiled successfully: mnist_pipeline.yaml"
+
+      - name: Compile UC2 PhoBERT pipeline
+        if: contains(steps.changed.outputs.stdout, 'uc2_phobert') || true
+        run: |
+          if [ -f kubeflow/uc2_phobert/pipeline.py ]; then
+            cd kubeflow/uc2_phobert
+            python3 pipeline.py
+            echo "UC2 compiled successfully: phobert_pipeline.yaml"
+          else
+            echo "UC2 pipeline not yet available, skipping."
+          fi
+
+      - name: Upload compiled pipelines as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kfp-compiled-pipelines
+          path: |
+            kubeflow/uc1_mnist/mnist_pipeline.yaml
+            kubeflow/uc2_phobert/phobert_pipeline.yaml
+          if-no-files-found: ignore
+          retention-days: 30
