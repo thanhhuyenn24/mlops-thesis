@@ -1,19 +1,16 @@
 name: MLOps CI/CD Pipeline
-
 on:
   push:
     branches: [main]
     paths:
       - 'airflow/**'
-
+      - 'shared/**'
 jobs:
   airflow_job:
     name: Airflow DAG Sync
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Sync DAGs to Airflow server via rsync
         env:
           SSH_KEY: ${{ secrets.AIRFLOW_SSH_KEY }}
@@ -21,9 +18,14 @@ jobs:
         run: |
           echo "$SSH_KEY" > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
-          
+
           rsync -avz -e "ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no" \
             airflow/ \
             root@$AIRFLOW_HOST:/home/airflow/airflowServer/dags/
-            
-          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no root@$AIRFLOW_HOST "chown -R airflow:airflow /home/airflow/airflowServer/dags/"
+
+          rsync -avz -e "ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no" \
+            shared/ \
+            root@$AIRFLOW_HOST:/home/airflow/airflowServer/dags/shared/
+
+          ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no root@$AIRFLOW_HOST \
+            "chown -R airflow:airflow /home/airflow/airflowServer/dags/"
