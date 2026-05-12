@@ -1,0 +1,246 @@
+# PIPELINE DEFINITION
+# Name: mnist-classification-pipeline
+# Description: UC1: DeepNN MNIST - KFP 2.4.0
+# Inputs:
+#    batch_size: int [Default: 64.0]
+#    epochs: int [Default: 10.0]
+#    learning_rate: float [Default: 0.001]
+# Outputs:
+#    evaluate-model-output_metrics: system.Metrics
+#    train-model-output_metrics: system.Metrics
+components:
+  comp-evaluate-model:
+    executorLabel: exec-evaluate-model
+    inputDefinitions:
+      artifacts:
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-train-model:
+    executorLabel: exec-train-model
+    inputDefinitions:
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-evaluate-model:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --extra-index-url\
+          \ https://pypi.org/simple --trusted-host https://pypi.org/simple 'kfp==2.4.0'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+          \  python3 -m pip install --quiet --no-warn-script-location --index-url\
+          \ https://download.pytorch.org/whl/cpu --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_model: Input[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Evaluate DeepNN on MNIST test set. Mirrors\
+          \ Airflow evaluate_model task.\"\"\"\n    import time\n    import numpy\
+          \ as np  # noqa\n    import torch\n    import torch.nn as nn\n    from torchvision\
+          \ import datasets, transforms\n    from torch.utils.data import DataLoader\n\
+          \n    print(f\"numpy version: {np.__version__}\")\n\n    class DeepNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.net = nn.Sequential(\n                nn.Flatten(),\n         \
+          \       nn.Linear(784, 256), nn.ReLU(), nn.Dropout(0.3),\n             \
+          \   nn.Linear(256, 128), nn.ReLU(), nn.Dropout(0.3),\n                nn.Linear(128,\
+          \ 64),  nn.ReLU(),\n                nn.Linear(64, 10),\n            )\n\
+          \        def forward(self, x):\n            return self.net(x)\n\n    transform\
+          \ = transforms.Compose([transforms.ToTensor()])\n    test_ds = datasets.MNIST(root=\"\
+          /tmp/mnist\", train=False,\n                              download=True,\
+          \ transform=transform)\n    test_loader = DataLoader(test_ds, batch_size=256,\n\
+          \                              shuffle=False, num_workers=0)\n\n    model\
+          \ = DeepNN()\n    model.load_state_dict(torch.load(input_model.path, map_location=\"\
+          cpu\"))\n    model.eval()\n\n    start = time.time()\n    correct = total\
+          \ = 0\n    with torch.no_grad():\n        for images, labels in test_loader:\n\
+          \            preds = model(images).argmax(dim=1)\n            correct +=\
+          \ (preds == labels).sum().item()\n            total += labels.size(0)\n\n\
+          \    accuracy = correct / total\n    eval_time = time.time() - start\n \
+          \   output_metrics.log_metric(\"accuracy\", round(accuracy, 4))\n    output_metrics.log_metric(\"\
+          eval_time_seconds\", round(eval_time, 2))\n    print(f\"Accuracy: {accuracy:.4f}\
+          \ | Eval time: {eval_time:.2f}s\")\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-train-model:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --extra-index-url\
+          \ https://pypi.org/simple --trusted-host https://pypi.org/simple 'kfp==2.4.0'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+          \  python3 -m pip install --quiet --no-warn-script-location --index-url\
+          \ https://download.pytorch.org/whl/cpu --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    epochs: int,\n    learning_rate: float,\n \
+          \   batch_size: int,\n    output_model: Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Train DeepNN on MNIST. Mirrors Airflow\
+          \ train_model task.\"\"\"\n    import time\n    import numpy as np  # noqa\n\
+          \    import torch\n    import torch.nn as nn\n    from torchvision import\
+          \ datasets, transforms\n    from torch.utils.data import DataLoader\n\n\
+          \    print(f\"numpy version: {np.__version__}\")\n    print(f\"torch version:\
+          \ {torch.__version__}\")\n\n    class DeepNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.net = nn.Sequential(\n\
+          \                nn.Flatten(),\n                nn.Linear(784, 256), nn.ReLU(),\
+          \ nn.Dropout(0.3),\n                nn.Linear(256, 128), nn.ReLU(), nn.Dropout(0.3),\n\
+          \                nn.Linear(128, 64),  nn.ReLU(),\n                nn.Linear(64,\
+          \ 10),\n            )\n        def forward(self, x):\n            return\
+          \ self.net(x)\n\n    transform = transforms.Compose([transforms.ToTensor()])\n\
+          \    train_ds = datasets.MNIST(root=\"/tmp/mnist\", train=True,\n      \
+          \                         download=True, transform=transform)\n    train_loader\
+          \ = DataLoader(train_ds, batch_size=batch_size,\n                      \
+          \         shuffle=True, num_workers=0)\n\n    model = DeepNN()\n    optimizer\
+          \ = torch.optim.Adam(model.parameters(), lr=learning_rate)\n    criterion\
+          \ = nn.CrossEntropyLoss()\n\n    start = time.time()\n    avg_loss = 0.0\n\
+          \    for epoch in range(epochs):\n        model.train()\n        total_loss\
+          \ = 0.0\n        for images, labels in train_loader:\n            optimizer.zero_grad()\n\
+          \            loss = criterion(model(images), labels)\n            loss.backward()\n\
+          \            optimizer.step()\n            total_loss += loss.item()\n \
+          \       avg_loss = total_loss / len(train_loader)\n        print(f\"Epoch\
+          \ {epoch+1}/{epochs} - Loss: {avg_loss:.4f}\")\n\n    train_time = time.time()\
+          \ - start\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", round(train_time, 2))\n    output_metrics.log_metric(\"\
+          final_loss\", round(avg_loss, 4))\n    print(f\"Training complete in {train_time:.2f}s\"\
+          )\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+pipelineInfo:
+  description: 'UC1: DeepNN MNIST - KFP 2.4.0'
+  name: mnist-classification-pipeline
+root:
+  dag:
+    outputs:
+      artifacts:
+        evaluate-model-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model
+        train-model-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model
+    tasks:
+      evaluate-model:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model
+        dependentTasks:
+        - train-model
+        inputs:
+          artifacts:
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model
+        taskInfo:
+          name: evaluate-model
+      train-model:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model
+        inputs:
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+        taskInfo:
+          name: train-model
+  inputDefinitions:
+    parameters:
+      batch_size:
+        defaultValue: 64.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      epochs:
+        defaultValue: 10.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      learning_rate:
+        defaultValue: 0.001
+        isOptional: true
+        parameterType: NUMBER_DOUBLE
+  outputDefinitions:
+    artifacts:
+      evaluate-model-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.4.0

@@ -5,6 +5,8 @@ on:
     paths:
       - 'airflow/**'
       - 'shared/**'
+      - 'kubeflow/**'
+
 jobs:
   airflow_job:
     name: Airflow DAG Sync
@@ -29,3 +31,59 @@ jobs:
 
           ssh -i /tmp/ssh_key -o StrictHostKeyChecking=no root@$AIRFLOW_HOST \
             "chown -R airflow:airflow /home/airflow/airflowServer/dags/"
+
+  kubeflow_job:
+    name: Kubeflow Pipeline Update
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install KFP SDK
+        run: pip install kfp==2.4.0
+
+      - name: Show changed Kubeflow files
+        run: |
+          echo "Changed files in kubeflow/:"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+            | grep '^kubeflow/' || echo "(none)"
+
+      - name: Notify Kubeflow pipeline change
+        run: |
+          echo "================================================"
+          echo "Kubeflow pipeline files updated."
+          echo "Cluster: OpenStack VM (not accessible from CI)"
+          echo "Action: manually re-run pipeline on KFP UI"
+          echo "  UC1 MNIST   : kubeflow/uc1_mnist/pipeline.py"
+          echo "  UC2 PhoBERT : kubeflow/uc2_phobert/pipeline.py"
+          echo "================================================"
+
+      - name: Compile UC1 MNIST pipeline
+        run: |
+          cd kubeflow/uc1_mnist
+          python3 pipeline.py
+          echo "UC1 compiled: mnist_pipeline.yaml"
+
+      - name: Compile UC2 PhoBERT pipeline
+        run: |
+          if [ -f kubeflow/uc2_phobert/pipeline.py ]; then
+            cd kubeflow/uc2_phobert
+            python3 pipeline.py
+            echo "UC2 compiled: phobert_pipeline.yaml"
+          else
+            echo "UC2 not yet available, skipping."
+          fi
+
+      - name: Upload compiled pipelines as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kfp-compiled-pipelines
+          path: |
+            kubeflow/uc1_mnist/mnist_pipeline.yaml
+            kubeflow/uc2_phobert/phobert_pipeline.yaml
+          if-no-files-found: ignore
+          retention-days: 30
