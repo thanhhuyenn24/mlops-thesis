@@ -1,31 +1,253 @@
 # PIPELINE DEFINITION
-# Name: mnist-classification-pipeline
-# Description: UC1: DeepNN MNIST - KFP 2.4.0
+# Name: mnist-classification-kubeflow
+# Description: UC1 MNIST — 3 models × 3 runs, metrics: accuracy + F1 + timing
 # Inputs:
 #    batch_size: int [Default: 64.0]
 #    epochs: int [Default: 10.0]
 #    learning_rate: float [Default: 0.001]
 # Outputs:
+#    evaluate-model-2-output_metrics: system.Metrics
+#    evaluate-model-3-output_metrics: system.Metrics
+#    evaluate-model-4-output_metrics: system.Metrics
+#    evaluate-model-5-output_metrics: system.Metrics
+#    evaluate-model-6-output_metrics: system.Metrics
+#    evaluate-model-7-output_metrics: system.Metrics
+#    evaluate-model-8-output_metrics: system.Metrics
+#    evaluate-model-9-output_metrics: system.Metrics
 #    evaluate-model-output_metrics: system.Metrics
+#    train-model-2-output_metrics: system.Metrics
+#    train-model-3-output_metrics: system.Metrics
+#    train-model-4-output_metrics: system.Metrics
+#    train-model-5-output_metrics: system.Metrics
+#    train-model-6-output_metrics: system.Metrics
+#    train-model-7-output_metrics: system.Metrics
+#    train-model-8-output_metrics: system.Metrics
+#    train-model-9-output_metrics: system.Metrics
 #    train-model-output_metrics: system.Metrics
 components:
   comp-evaluate-model:
     executorLabel: exec-evaluate-model
     inputDefinitions:
       artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
         input_model:
           artifactType:
             schemaTitle: system.Model
             schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
     outputDefinitions:
       artifacts:
         output_metrics:
           artifactType:
             schemaTitle: system.Metrics
             schemaVersion: 0.0.1
+  comp-evaluate-model-2:
+    executorLabel: exec-evaluate-model-2
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-3:
+    executorLabel: exec-evaluate-model-3
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-4:
+    executorLabel: exec-evaluate-model-4
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-5:
+    executorLabel: exec-evaluate-model-5
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-6:
+    executorLabel: exec-evaluate-model-6
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-7:
+    executorLabel: exec-evaluate-model-7
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-8:
+    executorLabel: exec-evaluate-model-8
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-evaluate-model-9:
+    executorLabel: exec-evaluate-model-9
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+      parameters:
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-load-data:
+    executorLabel: exec-load-data
+    outputDefinitions:
+      artifacts:
+        output_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
   comp-train-model:
     executorLabel: exec-train-model
     inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
       parameters:
         batch_size:
           parameterType: NUMBER_INTEGER
@@ -33,6 +255,242 @@ components:
           parameterType: NUMBER_INTEGER
         learning_rate:
           parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-2:
+    executorLabel: exec-train-model-2
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-3:
+    executorLabel: exec-train-model-3
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-4:
+    executorLabel: exec-train-model-4
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-5:
+    executorLabel: exec-train-model-5
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-6:
+    executorLabel: exec-train-model-6
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-7:
+    executorLabel: exec-train-model-7
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-8:
+    executorLabel: exec-train-model-8
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+  comp-train-model-9:
+    executorLabel: exec-train-model-9
+    inputDefinitions:
+      artifacts:
+        input_dataset:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+      parameters:
+        batch_size:
+          parameterType: NUMBER_INTEGER
+        epochs:
+          parameterType: NUMBER_INTEGER
+        learning_rate:
+          parameterType: NUMBER_DOUBLE
+        model_name:
+          parameterType: STRING
+        run_id:
+          parameterType: NUMBER_INTEGER
     outputDefinitions:
       artifacts:
         output_metrics:
@@ -58,14 +516,13 @@ deploymentSpec:
         - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
           \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
           \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
-          \ --trusted-host https://download.pytorch.org/whl/cpu --extra-index-url\
-          \ https://pypi.org/simple --trusted-host https://pypi.org/simple 'kfp==2.4.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location --index-url\
-          \ https://download.pytorch.org/whl/cpu --trusted-host https://download.pytorch.org/whl/cpu\
-          \ --extra-index-url https://pypi.org/simple --trusted-host https://pypi.org/simple\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
           \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
-          \ && \"$0\" \"$@\"\n"
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
         - sh
         - -ec
         - 'program_path=$(mktemp -d)
@@ -77,31 +534,884 @@ deploymentSpec:
 
           '
         - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef evaluate_model(\n    input_model: Input[Model],\n    output_metrics:\
-          \ Output[Metrics],\n):\n    \"\"\"Evaluate DeepNN on MNIST test set. Mirrors\
-          \ Airflow evaluate_model task.\"\"\"\n    import time\n    import numpy\
-          \ as np  # noqa\n    import torch\n    import torch.nn as nn\n    from torchvision\
-          \ import datasets, transforms\n    from torch.utils.data import DataLoader\n\
-          \n    print(f\"numpy version: {np.__version__}\")\n\n    class DeepNN(nn.Module):\n\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
           \        def __init__(self):\n            super().__init__()\n         \
-          \   self.net = nn.Sequential(\n                nn.Flatten(),\n         \
-          \       nn.Linear(784, 256), nn.ReLU(), nn.Dropout(0.3),\n             \
-          \   nn.Linear(256, 128), nn.ReLU(), nn.Dropout(0.3),\n                nn.Linear(128,\
-          \ 64),  nn.ReLU(),\n                nn.Linear(64, 10),\n            )\n\
-          \        def forward(self, x):\n            return self.net(x)\n\n    transform\
-          \ = transforms.Compose([transforms.ToTensor()])\n    test_ds = datasets.MNIST(root=\"\
-          /tmp/mnist\", train=False,\n                              download=True,\
-          \ transform=transform)\n    test_loader = DataLoader(test_ds, batch_size=256,\n\
-          \                              shuffle=False, num_workers=0)\n\n    model\
-          \ = DeepNN()\n    model.load_state_dict(torch.load(input_model.path, map_location=\"\
-          cpu\"))\n    model.eval()\n\n    start = time.time()\n    correct = total\
-          \ = 0\n    with torch.no_grad():\n        for images, labels in test_loader:\n\
-          \            preds = model(images).argmax(dim=1)\n            correct +=\
-          \ (preds == labels).sum().item()\n            total += labels.size(0)\n\n\
-          \    accuracy = correct / total\n    eval_time = time.time() - start\n \
-          \   output_metrics.log_metric(\"accuracy\", round(accuracy, 4))\n    output_metrics.log_metric(\"\
-          eval_time_seconds\", round(eval_time, 2))\n    print(f\"Accuracy: {accuracy:.4f}\
-          \ | Eval time: {eval_time:.2f}s\")\n\n"
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-2:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-3:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-4:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-5:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-6:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-7:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-8:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-evaluate-model-9:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_dataset: Input[Dataset],\n    input_model:\
+          \   Input[Model],\n    model_name:    str,\n    run_id:        int,\n  \
+          \  output_metrics: Output[Metrics],\n):\n    \"\"\"Evaluate model tr\xEA\
+          n MNIST test set, log accuracy + F1-macro.\"\"\"\n    import time\n    import\
+          \ torch\n    import torch.nn as nn\n    from torch.utils.data import TensorDataset,\
+          \ DataLoader\n    from sklearn.metrics import accuracy_score, f1_score\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng train step \u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.fc1  = nn.Linear(784, 128)\n            self.fc2  = nn.Linear(128,\
+          \ 10)\n            self.relu = nn.ReLU()\n        def forward(self, x):\n\
+          \            x = x.view(-1, 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\
+          \n    class DeepNN(nn.Module):\n        def __init__(self):\n          \
+          \  super().__init__()\n            self.fc1     = nn.Linear(784, 512)\n\
+          \            self.fc2     = nn.Linear(512, 256)\n            self.fc3  \
+          \   = nn.Linear(256, 128)\n            self.fc4     = nn.Linear(128, 10)\n\
+          \            self.dropout = nn.Dropout(0.3)\n            self.relu    =\
+          \ nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1, 784)\n\
+          \            x = self.relu(self.fc1(x)); x = self.dropout(x)\n         \
+          \   x = self.relu(self.fc2(x)); x = self.dropout(x)\n            x = self.relu(self.fc3(x))\n\
+          \            return self.fc4(x)\n\n    class CNN(nn.Module):\n        def\
+          \ __init__(self):\n            super().__init__()\n            self.conv1\
+          \   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n            self.bn1 \
+          \    = nn.BatchNorm2d(32)\n            self.conv2   = nn.Conv2d(32, 64,\
+          \ kernel_size=3, padding=1)\n            self.bn2     = nn.BatchNorm2d(64)\n\
+          \            self.pool    = nn.MaxPool2d(2, 2)\n            self.fc1   \
+          \  = nn.Linear(64 * 7 * 7, 128)\n            self.fc2     = nn.Linear(128,\
+          \ 10)\n            self.relu    = nn.ReLU()\n            self.dropout =\
+          \ nn.Dropout(0.3)\n        def forward(self, x):\n            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n\
+          \            x = self.pool(self.relu(self.bn2(self.conv2(x))))\n       \
+          \     x = x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load test data \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
+          \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
+          ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
+          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
+          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
+          \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
+          \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
+          \            all_preds.extend(preds.numpy())\n            all_labels.extend(labels.numpy())\n\
+          \n    eval_time = round(time.time() - t0, 3)\n    accuracy  = round(accuracy_score(all_labels,\
+          \ all_preds) * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds,\
+          \ average='macro') * 100, 4)\n\n    print(f\"[evaluate] model={model_name}\
+          \ run={run_id}\")\n    print(f\"  Accuracy: {accuracy:.4f}%\")\n    print(f\"\
+          \  F1-macro: {f1:.4f}%\")\n    print(f\"  Eval time: {eval_time}s\")\n\n\
+          \    output_metrics.log_metric(\"accuracy\",          accuracy)\n    output_metrics.log_metric(\"\
+          f1_macro\",          f1)\n    output_metrics.log_metric(\"eval_time_seconds\"\
+          , eval_time)\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 1.0
+          memoryLimit: 1.073741824
+    exec-load-data:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - load_data
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef load_data(output_dataset: Output[Dataset]):\n    \"\"\"Download\
+          \ MNIST v\xE0 l\u01B0u train/test tensors.\"\"\"\n    import time\n    import\
+          \ torch\n    from torchvision import datasets, transforms\n\n    t0 = time.time()\n\
+          \    transform = transforms.Compose([transforms.ToTensor()])\n    train_ds\
+          \  = datasets.MNIST(root=\"/tmp/mnist\", train=True,  download=True, transform=transform)\n\
+          \    test_ds   = datasets.MNIST(root=\"/tmp/mnist\", train=False, download=True,\
+          \ transform=transform)\n\n    # L\u01B0u d\u01B0\u1EDBi d\u1EA1ng tensor\
+          \ \u0111\u1EC3 tr\xE1nh re-download \u1EDF c\xE1c step sau\n    data = {\n\
+          \        \"train_images\": train_ds.data.float() / 255.0,\n        \"train_labels\"\
+          : train_ds.targets,\n        \"test_images\":  test_ds.data.float()  / 255.0,\n\
+          \        \"test_labels\":  test_ds.targets,\n    }\n    torch.save(data,\
+          \ output_dataset.path)\n\n    elapsed = round(time.time() - t0, 3)\n   \
+          \ print(f\"[load_data] Train: {len(train_ds)}, Test: {len(test_ds)}, time={elapsed}s\"\
+          )\n\n"
         image: python:3.11-slim
         resources:
           cpuLimit: 1.0
@@ -119,14 +1429,13 @@ deploymentSpec:
         - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
           \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
           \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
-          \ --trusted-host https://download.pytorch.org/whl/cpu --extra-index-url\
-          \ https://pypi.org/simple --trusted-host https://pypi.org/simple 'kfp==2.4.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location --index-url\
-          \ https://download.pytorch.org/whl/cpu --trusted-host https://download.pytorch.org/whl/cpu\
-          \ --extra-index-url https://pypi.org/simple --trusted-host https://pypi.org/simple\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
           \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
-          \ && \"$0\" \"$@\"\n"
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
         - sh
         - -ec
         - 'program_path=$(mktemp -d)
@@ -138,51 +1447,932 @@ deploymentSpec:
 
           '
         - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef train_model(\n    epochs: int,\n    learning_rate: float,\n \
-          \   batch_size: int,\n    output_model: Output[Model],\n    output_metrics:\
-          \ Output[Metrics],\n):\n    \"\"\"Train DeepNN on MNIST. Mirrors Airflow\
-          \ train_model task.\"\"\"\n    import time\n    import numpy as np  # noqa\n\
-          \    import torch\n    import torch.nn as nn\n    from torchvision import\
-          \ datasets, transforms\n    from torch.utils.data import DataLoader\n\n\
-          \    print(f\"numpy version: {np.__version__}\")\n    print(f\"torch version:\
-          \ {torch.__version__}\")\n\n    class DeepNN(nn.Module):\n        def __init__(self):\n\
-          \            super().__init__()\n            self.net = nn.Sequential(\n\
-          \                nn.Flatten(),\n                nn.Linear(784, 256), nn.ReLU(),\
-          \ nn.Dropout(0.3),\n                nn.Linear(256, 128), nn.ReLU(), nn.Dropout(0.3),\n\
-          \                nn.Linear(128, 64),  nn.ReLU(),\n                nn.Linear(64,\
-          \ 10),\n            )\n        def forward(self, x):\n            return\
-          \ self.net(x)\n\n    transform = transforms.Compose([transforms.ToTensor()])\n\
-          \    train_ds = datasets.MNIST(root=\"/tmp/mnist\", train=True,\n      \
-          \                         download=True, transform=transform)\n    train_loader\
-          \ = DataLoader(train_ds, batch_size=batch_size,\n                      \
-          \         shuffle=True, num_workers=0)\n\n    model = DeepNN()\n    optimizer\
-          \ = torch.optim.Adam(model.parameters(), lr=learning_rate)\n    criterion\
-          \ = nn.CrossEntropyLoss()\n\n    start = time.time()\n    avg_loss = 0.0\n\
-          \    for epoch in range(epochs):\n        model.train()\n        total_loss\
-          \ = 0.0\n        for images, labels in train_loader:\n            optimizer.zero_grad()\n\
-          \            loss = criterion(model(images), labels)\n            loss.backward()\n\
-          \            optimizer.step()\n            total_loss += loss.item()\n \
-          \       avg_loss = total_loss / len(train_loader)\n        print(f\"Epoch\
-          \ {epoch+1}/{epochs} - Loss: {avg_loss:.4f}\")\n\n    train_time = time.time()\
-          \ - start\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
-          train_time_seconds\", round(train_time, 2))\n    output_metrics.log_metric(\"\
-          final_loss\", round(avg_loss, 4))\n    print(f\"Training complete in {train_time:.2f}s\"\
-          )\n\n"
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-2:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-3:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-4:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-5:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-6:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-7:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-8:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 2.147483648
+    exec-train-model-9:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy==1.26.4' 'Pillow==10.3.0' 'torch==2.2.2+cpu' 'torchvision==0.17.2+cpu'\
+          \ 'scikit-learn==1.4.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_dataset: Input[Dataset],\n    model_name:\
+          \ str,\n    run_id: int,\n    epochs: int,\n    learning_rate: float,\n\
+          \    batch_size: int,\n    output_model:   Output[Model],\n    output_metrics:\
+          \ Output[Metrics],\n):\n    \"\"\"Fine-tune SimpleNN / DeepNN / CNN tr\xEA\
+          n MNIST train set.\"\"\"\n    import time\n    import torch\n    import\
+          \ torch.nn as nn\n    from torch.utils.data import TensorDataset, DataLoader\n\
+          \n    # \u2500\u2500 Model definitions \u2014 gi\u1ED1ng models_mnist.py\
+          \ \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\n    class SimpleNN(nn.Module):\n        def __init__(self):\n\
+          \            super().__init__()\n            self.fc1  = nn.Linear(784,\
+          \ 128)\n            self.fc2  = nn.Linear(128, 10)\n            self.relu\
+          \ = nn.ReLU()\n        def forward(self, x):\n            x = x.view(-1,\
+          \ 784)\n            return self.fc2(self.relu(self.fc1(x)))\n\n    class\
+          \ DeepNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.fc1     = nn.Linear(784, 512)\n            self.fc2  \
+          \   = nn.Linear(512, 256)\n            self.fc3     = nn.Linear(256, 128)\n\
+          \            self.fc4     = nn.Linear(128, 10)\n            self.dropout\
+          \ = nn.Dropout(0.3)\n            self.relu    = nn.ReLU()\n        def forward(self,\
+          \ x):\n            x = x.view(-1, 784)\n            x = self.relu(self.fc1(x));\
+          \ x = self.dropout(x)\n            x = self.relu(self.fc2(x)); x = self.dropout(x)\n\
+          \            x = self.relu(self.fc3(x))\n            return self.fc4(x)\n\
+          \n    class CNN(nn.Module):\n        def __init__(self):\n            super().__init__()\n\
+          \            self.conv1   = nn.Conv2d(1, 32, kernel_size=3, padding=1)\n\
+          \            self.bn1     = nn.BatchNorm2d(32)\n            self.conv2 \
+          \  = nn.Conv2d(32, 64, kernel_size=3, padding=1)\n            self.bn2 \
+          \    = nn.BatchNorm2d(64)\n            self.pool    = nn.MaxPool2d(2, 2)\n\
+          \            self.fc1     = nn.Linear(64 * 7 * 7, 128)\n            self.fc2\
+          \     = nn.Linear(128, 10)\n            self.relu    = nn.ReLU()\n     \
+          \       self.dropout = nn.Dropout(0.3)\n        def forward(self, x):\n\
+          \            x = self.pool(self.relu(self.bn1(self.conv1(x))))\n       \
+          \     x = self.pool(self.relu(self.bn2(self.conv2(x))))\n            x =\
+          \ x.view(-1, 64 * 7 * 7)\n            return self.fc2(self.dropout(self.relu(self.fc1(x))))\n\
+          \n    MODEL_CLASSES = {\"SimpleNN\": SimpleNN, \"DeepNN\": DeepNN, \"CNN\"\
+          : CNN}\n\n    # \u2500\u2500 Load data \u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\n    data         = torch.load(input_dataset.path)\n\
+          \    train_images = data[\"train_images\"].unsqueeze(1)  # (N,1,28,28) cho\
+          \ CNN\n    train_labels = data[\"train_labels\"]\n\n    train_ds     = TensorDataset(train_images,\
+          \ train_labels)\n    train_loader = DataLoader(train_ds, batch_size=batch_size,\
+          \ shuffle=True)\n\n    # \u2500\u2500 Train \u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   \
+          \ model     = MODEL_CLASSES[model_name]()\n    optimizer = torch.optim.Adam(model.parameters(),\
+          \ lr=learning_rate)\n    criterion = nn.CrossEntropyLoss()\n\n    print(f\"\
+          [train] model={model_name} run={run_id} epochs={epochs} lr={learning_rate}\
+          \ batch={batch_size}\")\n\n    t0 = time.time()\n    for epoch in range(epochs):\n\
+          \        model.train()\n        total_loss = 0.0\n        for images, labels\
+          \ in train_loader:\n            optimizer.zero_grad()\n            loss\
+          \ = criterion(model(images), labels)\n            loss.backward()\n    \
+          \        optimizer.step()\n            total_loss += loss.item()\n     \
+          \   avg_loss = total_loss / len(train_loader)\n        print(f\"  Epoch\
+          \ {epoch+1}/{epochs} \u2014 loss: {avg_loss:.4f}\")\n\n    train_time =\
+          \ round(time.time() - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\"\
+          )\n\n    torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
         image: python:3.11-slim
         resources:
           cpuLimit: 2.0
           memoryLimit: 2.147483648
 pipelineInfo:
-  description: 'UC1: DeepNN MNIST - KFP 2.4.0'
-  name: mnist-classification-pipeline
+  description: "UC1 MNIST \u2014 3 models \xD7 3 runs, metrics: accuracy + F1 + timing"
+  name: mnist-classification-kubeflow
 root:
   dag:
     outputs:
       artifacts:
+        evaluate-model-2-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-2
+        evaluate-model-3-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-3
+        evaluate-model-4-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-4
+        evaluate-model-5-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-5
+        evaluate-model-6-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-6
+        evaluate-model-7-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-7
+        evaluate-model-8-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-8
+        evaluate-model-9-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model-9
         evaluate-model-output_metrics:
           artifactSelectors:
           - outputArtifactKey: output_metrics
             producerSubtask: evaluate-model
+        train-model-2-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-2
+        train-model-3-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-3
+        train-model-4-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-4
+        train-model-5-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-5
+        train-model-6-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-6
+        train-model-7-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-7
+        train-model-8-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-8
+        train-model-9-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model-9
         train-model-output_metrics:
           artifactSelectors:
           - outputArtifactKey: output_metrics
@@ -194,21 +2384,263 @@ root:
         componentRef:
           name: comp-evaluate-model
         dependentTasks:
+        - load-data
         - train-model
         inputs:
           artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
             input_model:
               taskOutputArtifact:
                 outputArtifactKey: output_model
                 producerTask: train-model
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: SimpleNN
+            run_id:
+              runtimeValue:
+                constant: 1.0
         taskInfo:
           name: evaluate-model
+      evaluate-model-2:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-2
+        dependentTasks:
+        - load-data
+        - train-model-2
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-2
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: SimpleNN
+            run_id:
+              runtimeValue:
+                constant: 2.0
+        taskInfo:
+          name: evaluate-model-2
+      evaluate-model-3:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-3
+        dependentTasks:
+        - load-data
+        - train-model-3
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-3
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: SimpleNN
+            run_id:
+              runtimeValue:
+                constant: 3.0
+        taskInfo:
+          name: evaluate-model-3
+      evaluate-model-4:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-4
+        dependentTasks:
+        - load-data
+        - train-model-4
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-4
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: DeepNN
+            run_id:
+              runtimeValue:
+                constant: 1.0
+        taskInfo:
+          name: evaluate-model-4
+      evaluate-model-5:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-5
+        dependentTasks:
+        - load-data
+        - train-model-5
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-5
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: DeepNN
+            run_id:
+              runtimeValue:
+                constant: 2.0
+        taskInfo:
+          name: evaluate-model-5
+      evaluate-model-6:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-6
+        dependentTasks:
+        - load-data
+        - train-model-6
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-6
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: DeepNN
+            run_id:
+              runtimeValue:
+                constant: 3.0
+        taskInfo:
+          name: evaluate-model-6
+      evaluate-model-7:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-7
+        dependentTasks:
+        - load-data
+        - train-model-7
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-7
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: CNN
+            run_id:
+              runtimeValue:
+                constant: 1.0
+        taskInfo:
+          name: evaluate-model-7
+      evaluate-model-8:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-8
+        dependentTasks:
+        - load-data
+        - train-model-8
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-8
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: CNN
+            run_id:
+              runtimeValue:
+                constant: 2.0
+        taskInfo:
+          name: evaluate-model-8
+      evaluate-model-9:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-evaluate-model-9
+        dependentTasks:
+        - load-data
+        - train-model-9
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model-9
+          parameters:
+            model_name:
+              runtimeValue:
+                constant: CNN
+            run_id:
+              runtimeValue:
+                constant: 3.0
+        taskInfo:
+          name: evaluate-model-9
+      load-data:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-load-data
+        taskInfo:
+          name: load-data
       train-model:
         cachingOptions:
           enableCache: true
         componentRef:
           name: comp-train-model
+        dependentTasks:
+        - load-data
         inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
           parameters:
             batch_size:
               componentInputParameter: batch_size
@@ -216,8 +2648,238 @@ root:
               componentInputParameter: epochs
             learning_rate:
               componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: SimpleNN
+            run_id:
+              runtimeValue:
+                constant: 1.0
         taskInfo:
           name: train-model
+      train-model-2:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-2
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: SimpleNN
+            run_id:
+              runtimeValue:
+                constant: 2.0
+        taskInfo:
+          name: train-model-2
+      train-model-3:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-3
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: SimpleNN
+            run_id:
+              runtimeValue:
+                constant: 3.0
+        taskInfo:
+          name: train-model-3
+      train-model-4:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-4
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: DeepNN
+            run_id:
+              runtimeValue:
+                constant: 1.0
+        taskInfo:
+          name: train-model-4
+      train-model-5:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-5
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: DeepNN
+            run_id:
+              runtimeValue:
+                constant: 2.0
+        taskInfo:
+          name: train-model-5
+      train-model-6:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-6
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: DeepNN
+            run_id:
+              runtimeValue:
+                constant: 3.0
+        taskInfo:
+          name: train-model-6
+      train-model-7:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-7
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: CNN
+            run_id:
+              runtimeValue:
+                constant: 1.0
+        taskInfo:
+          name: train-model-7
+      train-model-8:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-8
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: CNN
+            run_id:
+              runtimeValue:
+                constant: 2.0
+        taskInfo:
+          name: train-model-8
+      train-model-9:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-train-model-9
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_dataset:
+              taskOutputArtifact:
+                outputArtifactKey: output_dataset
+                producerTask: load-data
+          parameters:
+            batch_size:
+              componentInputParameter: batch_size
+            epochs:
+              componentInputParameter: epochs
+            learning_rate:
+              componentInputParameter: learning_rate
+            model_name:
+              runtimeValue:
+                constant: CNN
+            run_id:
+              runtimeValue:
+                constant: 3.0
+        taskInfo:
+          name: train-model-9
   inputDefinitions:
     parameters:
       batch_size:
@@ -234,7 +2896,71 @@ root:
         parameterType: NUMBER_DOUBLE
   outputDefinitions:
     artifacts:
+      evaluate-model-2-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-3-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-4-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-5-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-6-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-7-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-8-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      evaluate-model-9-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
       evaluate-model-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-2-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-3-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-4-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-5-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-6-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-7-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-8-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-9-output_metrics:
         artifactType:
           schemaTitle: system.Metrics
           schemaVersion: 0.0.1
@@ -243,4 +2969,4 @@ root:
           schemaTitle: system.Metrics
           schemaVersion: 0.0.1
 schemaVersion: 2.1.0
-sdkVersion: kfp-2.4.0
+sdkVersion: kfp-2.9.0
