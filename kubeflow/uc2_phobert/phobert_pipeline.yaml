@@ -1,0 +1,445 @@
+# PIPELINE DEFINITION
+# Name: phobert-sentiment-kubeflow
+# Description: UC2 PhoBERT fine-tune — UIT-VSFC full, 3 epochs, CPU
+# Outputs:
+#    evaluate-model-output_metrics: system.Metrics
+#    train-model-output_metrics: system.Metrics
+components:
+  comp-evaluate-model:
+    executorLabel: exec-evaluate-model
+    inputDefinitions:
+      artifacts:
+        input_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+        input_test_tok:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+  comp-load-data:
+    executorLabel: exec-load-data
+    outputDefinitions:
+      artifacts:
+        output_test:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        output_train:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        output_val:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-preprocess:
+    executorLabel: exec-preprocess
+    inputDefinitions:
+      artifacts:
+        input_test:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_train:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_val:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        output_test_tok:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        output_train_tok:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        output_val_tok:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+  comp-train-model:
+    executorLabel: exec-train-model
+    inputDefinitions:
+      artifacts:
+        input_train_tok:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        input_val_tok:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        output_metrics:
+          artifactType:
+            schemaTitle: system.Metrics
+            schemaVersion: 0.0.1
+        output_model:
+          artifactType:
+            schemaTitle: system.Model
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-evaluate-model:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - evaluate_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy<2.0' 'torch==2.2.2+cpu' 'transformers==4.44.0' 'datasets==2.19.0'\
+          \ 'scikit-learn==1.4.2' 'pyarrow==14.0.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef evaluate_model(\n    input_test_tok: Input[Dataset],\n    input_model:\
+          \    Input[Model],\n    output_metrics: Output[Metrics],\n):\n    \"\"\"\
+          Evaluate PhoBERT tr\xEAn test set, log accuracy + F1-macro.\"\"\"\n    import\
+          \ time\n    import pickle\n    import torch\n    import torch.nn as nn\n\
+          \    from torch.utils.data import DataLoader\n    from transformers import\
+          \ AutoModel\n    from sklearn.metrics import accuracy_score, f1_score\n\n\
+          \    PHOBERT_MODEL_NAME = \"vinai/phobert-base\"\n    NUM_LABELS       \
+          \  = 3\n    BATCH_SIZE         = 8\n    LABEL_COL          = \"sentiment\"\
+          \n\n    with open(input_test_tok.path, 'rb') as f: test_ds = pickle.load(f)\n\
+          \    test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE)\n\n    class\
+          \ PhoBERTClassifier(nn.Module):\n        def __init__(self):\n         \
+          \   super().__init__()\n            self.phobert    = AutoModel.from_pretrained(PHOBERT_MODEL_NAME)\n\
+          \            self.classifier = nn.Linear(768, NUM_LABELS)\n\n        def\
+          \ forward(self, input_ids, attention_mask):\n            out = self.phobert(input_ids=input_ids,\
+          \ attention_mask=attention_mask)\n            cls = out.last_hidden_state[:,\
+          \ 0, :]\n            return self.classifier(cls)\n\n    device = torch.device('cpu')\n\
+          \    model  = PhoBERTClassifier().to(device)\n    model.load_state_dict(torch.load(input_model.path,\
+          \ map_location=device))\n    model.eval()\n\n    all_preds, all_labels =\
+          \ [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for batch\
+          \ in test_loader:\n            input_ids      = batch['input_ids'].to(device)\n\
+          \            attention_mask = batch['attention_mask'].to(device)\n     \
+          \       labels         = batch[LABEL_COL]\n            preds          =\
+          \ model(input_ids, attention_mask).argmax(dim=1).cpu()\n            all_preds.extend(preds.numpy())\n\
+          \            all_labels.extend(labels.numpy())\n\n    eval_time = round(time.time()\
+          \ - t0, 3)\n    accuracy  = round(accuracy_score(all_labels, all_preds)\
+          \ * 100, 4)\n    f1        = round(f1_score(all_labels, all_preds, average='macro')\
+          \ * 100, 4)\n\n    print(f\"[evaluate] Accuracy: {accuracy:.4f}%\")\n  \
+          \  print(f\"[evaluate] F1-macro: {f1:.4f}%\")\n    print(f\"[evaluate] Eval\
+          \ time: {eval_time}s\")\n\n    output_metrics.log_metric(\"accuracy\", \
+          \         accuracy)\n    output_metrics.log_metric(\"f1_macro\",       \
+          \   f1)\n    output_metrics.log_metric(\"eval_time_seconds\", eval_time)\n\
+          \n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 8.589934592
+    exec-load-data:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - load_data
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy<2.0' 'torch==2.2.2+cpu' 'transformers==4.44.0' 'datasets==2.19.0'\
+          \ 'scikit-learn==1.4.2' 'pyarrow==14.0.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef load_data(\n    output_train: Output[Dataset],\n    output_val:\
+          \   Output[Dataset],\n    output_test:  Output[Dataset],\n):\n    \"\"\"\
+          Load UIT-VSFC t\u1EEB HuggingFace, d\xF9ng split chu\u1EA9n.\"\"\"\n   \
+          \ import time\n    import pickle\n    from datasets import load_dataset\n\
+          \n    t0 = time.time()\n    print(\"[load_data] Loading UIT-VSFC...\")\n\
+          \n    dataset  = load_dataset(\"uitnlp/vietnamese_students_feedback\")\n\
+          \    train_ds = dataset['train']\n    val_ds   = dataset['validation']\n\
+          \    test_ds  = dataset['test']\n\n    print(f\"[load_data] Train: {len(train_ds)},\
+          \ Val: {len(val_ds)}, Test: {len(test_ds)}\")\n\n    with open(output_train.path,\
+          \ 'wb') as f: pickle.dump(train_ds, f)\n    with open(output_val.path, \
+          \  'wb') as f: pickle.dump(val_ds,   f)\n    with open(output_test.path,\
+          \  'wb') as f: pickle.dump(test_ds,  f)\n\n    elapsed = round(time.time()\
+          \ - t0, 3)\n    print(f\"[load_data] done. time={elapsed}s\")\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 4.294967296
+    exec-preprocess:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - preprocess
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy<2.0' 'torch==2.2.2+cpu' 'transformers==4.44.0' 'datasets==2.19.0'\
+          \ 'scikit-learn==1.4.2' 'pyarrow==14.0.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef preprocess(\n    input_train: Input[Dataset],\n    input_val:\
+          \   Input[Dataset],\n    input_test:  Input[Dataset],\n    output_train_tok:\
+          \ Output[Dataset],\n    output_val_tok:   Output[Dataset],\n    output_test_tok:\
+          \  Output[Dataset],\n):\n    \"\"\"Tokenize UIT-VSFC v\u1EDBi PhoBERT tokenizer.\"\
+          \"\"\n    import time\n    import pickle\n    from transformers import AutoTokenizer\n\
+          \n    PHOBERT_MODEL_NAME = \"vinai/phobert-base\"\n    MAX_LENGTH      \
+          \   = 256\n    TEXT_COL           = \"sentence\"\n    LABEL_COL        \
+          \  = \"sentiment\"\n\n    t0 = time.time()\n    print(\"[preprocess] Loading\
+          \ PhoBERT tokenizer...\")\n    tokenizer = AutoTokenizer.from_pretrained(PHOBERT_MODEL_NAME)\n\
+          \n    def tokenize(dataset):\n        tokenized = dataset.map(\n       \
+          \     lambda x: tokenizer(\n                x[TEXT_COL],\n             \
+          \   padding='max_length',\n                truncation=True,\n          \
+          \      max_length=MAX_LENGTH,\n            ),\n            batched=True,\n\
+          \        )\n        tokenized = tokenized.remove_columns(\n            [c\
+          \ for c in tokenized.column_names\n             if c not in ['input_ids',\
+          \ 'attention_mask', LABEL_COL]]\n        )\n        tokenized.set_format(type='torch',\
+          \ columns=['input_ids', 'attention_mask', LABEL_COL])\n        return tokenized\n\
+          \n    with open(input_train.path, 'rb') as f: train_ds = pickle.load(f)\n\
+          \    with open(input_val.path,   'rb') as f: val_ds   = pickle.load(f)\n\
+          \    with open(input_test.path,  'rb') as f: test_ds  = pickle.load(f)\n\
+          \n    print(\"[preprocess] Tokenizing...\")\n    train_tok = tokenize(train_ds)\n\
+          \    val_tok   = tokenize(val_ds)\n    test_tok  = tokenize(test_ds)\n\n\
+          \    with open(output_train_tok.path, 'wb') as f: pickle.dump(train_tok,\
+          \ f)\n    with open(output_val_tok.path,   'wb') as f: pickle.dump(val_tok,\
+          \   f)\n    with open(output_test_tok.path,  'wb') as f: pickle.dump(test_tok,\
+          \  f)\n\n    elapsed = round(time.time() - t0, 3)\n    print(f\"[preprocess]\
+          \ done. time={elapsed}s\")\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 2.0
+          memoryLimit: 4.294967296
+    exec-train-model:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - train_model
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location --index-url https://download.pytorch.org/whl/cpu\
+          \ --extra-index-url https://pypi.org/simple --trusted-host https://download.pytorch.org/whl/cpu\
+          \ --trusted-host https://pypi.org/simple 'kfp==2.9.0' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple\
+          \ --trusted-host https://download.pytorch.org/whl/cpu --trusted-host https://pypi.org/simple\
+          \ 'numpy<2.0' 'torch==2.2.2+cpu' 'transformers==4.44.0' 'datasets==2.19.0'\
+          \ 'scikit-learn==1.4.2' 'pyarrow==14.0.2' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef train_model(\n    input_train_tok: Input[Dataset],\n    input_val_tok:\
+          \   Input[Dataset],\n    output_model:    Output[Model],\n    output_metrics:\
+          \  Output[Metrics],\n):\n    \"\"\"Fine-tune PhoBERT-base + Linear(768\u2192\
+          3) tr\xEAn UIT-VSFC train set.\"\"\"\n    import time\n    import pickle\n\
+          \    import torch\n    import torch.nn as nn\n    from torch.utils.data\
+          \ import DataLoader\n    from transformers import AutoModel\n    from torch.optim\
+          \ import AdamW\n\n    PHOBERT_MODEL_NAME = \"vinai/phobert-base\"\n    NUM_LABELS\
+          \         = 3\n    LR                 = 2e-5\n    BATCH_SIZE         = 8\n\
+          \    EPOCHS             = 3\n    WEIGHT_DECAY       = 0.01\n    LABEL_COL\
+          \          = \"sentiment\"\n\n    with open(input_train_tok.path, 'rb')\
+          \ as f: train_ds = pickle.load(f)\n    with open(input_val_tok.path,   'rb')\
+          \ as f: val_ds   = pickle.load(f)\n\n    train_loader = DataLoader(train_ds,\
+          \ batch_size=BATCH_SIZE, shuffle=True)\n    val_loader   = DataLoader(val_ds,\
+          \   batch_size=BATCH_SIZE)\n\n    class PhoBERTClassifier(nn.Module):\n\
+          \        def __init__(self):\n            super().__init__()\n         \
+          \   self.phobert    = AutoModel.from_pretrained(PHOBERT_MODEL_NAME)\n  \
+          \          self.classifier = nn.Linear(768, NUM_LABELS)\n            # Gradient\
+          \ checkpointing \u0111\u1EC3 ti\u1EBFt ki\u1EC7m RAM\n            self.phobert.gradient_checkpointing_enable()\n\
+          \n        def forward(self, input_ids, attention_mask):\n            out\
+          \ = self.phobert(input_ids=input_ids, attention_mask=attention_mask)\n \
+          \           cls = out.last_hidden_state[:, 0, :]\n            return self.classifier(cls)\n\
+          \n    device    = torch.device('cpu')\n    model     = PhoBERTClassifier().to(device)\n\
+          \    optimizer = AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)\n\
+          \    criterion = nn.CrossEntropyLoss()\n\n    print(f\"[train] Fine-tuning\
+          \ PhoBERT \u2014 epochs={EPOCHS} lr={LR} batch={BATCH_SIZE} device=cpu\"\
+          )\n\n    t0 = time.time()\n    for epoch in range(EPOCHS):\n        model.train()\n\
+          \        total_loss = 0\n        for batch in train_loader:\n          \
+          \  input_ids      = batch['input_ids'].to(device)\n            attention_mask\
+          \ = batch['attention_mask'].to(device)\n            labels         = batch[LABEL_COL].to(device)\n\
+          \n            optimizer.zero_grad()\n            logits = model(input_ids,\
+          \ attention_mask)\n            loss   = criterion(logits, labels)\n    \
+          \        loss.backward()\n            optimizer.step()\n            total_loss\
+          \ += loss.item()\n\n        avg_loss = total_loss / len(train_loader)\n\n\
+          \        # Validation\n        model.eval()\n        val_loss = 0\n    \
+          \    with torch.no_grad():\n            for batch in val_loader:\n     \
+          \           input_ids      = batch['input_ids'].to(device)\n           \
+          \     attention_mask = batch['attention_mask'].to(device)\n            \
+          \    labels         = batch[LABEL_COL].to(device)\n                val_loss\
+          \      += criterion(model(input_ids, attention_mask), labels).item()\n\n\
+          \        print(f\"  Epoch {epoch+1}/{EPOCHS} \u2014 train_loss: {avg_loss:.4f},\
+          \ val_loss: {val_loss/len(val_loader):.4f}\")\n\n    train_time = round(time.time()\
+          \ - t0, 3)\n    print(f\"[train] done. train_time={train_time}s\")\n\n \
+          \   torch.save(model.state_dict(), output_model.path)\n    output_metrics.log_metric(\"\
+          train_time_seconds\", train_time)\n    output_metrics.log_metric(\"final_loss\"\
+          ,         round(avg_loss, 4))\n\n"
+        image: python:3.11-slim
+        resources:
+          cpuLimit: 4.0
+          memoryLimit: 12.884901888
+pipelineInfo:
+  description: "UC2 PhoBERT fine-tune \u2014 UIT-VSFC full, 3 epochs, CPU"
+  name: phobert-sentiment-kubeflow
+root:
+  dag:
+    outputs:
+      artifacts:
+        evaluate-model-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: evaluate-model
+        train-model-output_metrics:
+          artifactSelectors:
+          - outputArtifactKey: output_metrics
+            producerSubtask: train-model
+    tasks:
+      evaluate-model:
+        cachingOptions: {}
+        componentRef:
+          name: comp-evaluate-model
+        dependentTasks:
+        - preprocess
+        - train-model
+        inputs:
+          artifacts:
+            input_model:
+              taskOutputArtifact:
+                outputArtifactKey: output_model
+                producerTask: train-model
+            input_test_tok:
+              taskOutputArtifact:
+                outputArtifactKey: output_test_tok
+                producerTask: preprocess
+        taskInfo:
+          name: evaluate-model
+      load-data:
+        cachingOptions: {}
+        componentRef:
+          name: comp-load-data
+        taskInfo:
+          name: load-data
+      preprocess:
+        cachingOptions: {}
+        componentRef:
+          name: comp-preprocess
+        dependentTasks:
+        - load-data
+        inputs:
+          artifacts:
+            input_test:
+              taskOutputArtifact:
+                outputArtifactKey: output_test
+                producerTask: load-data
+            input_train:
+              taskOutputArtifact:
+                outputArtifactKey: output_train
+                producerTask: load-data
+            input_val:
+              taskOutputArtifact:
+                outputArtifactKey: output_val
+                producerTask: load-data
+        taskInfo:
+          name: preprocess
+      train-model:
+        cachingOptions: {}
+        componentRef:
+          name: comp-train-model
+        dependentTasks:
+        - preprocess
+        inputs:
+          artifacts:
+            input_train_tok:
+              taskOutputArtifact:
+                outputArtifactKey: output_train_tok
+                producerTask: preprocess
+            input_val_tok:
+              taskOutputArtifact:
+                outputArtifactKey: output_val_tok
+                producerTask: preprocess
+        taskInfo:
+          name: train-model
+  outputDefinitions:
+    artifacts:
+      evaluate-model-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+      train-model-output_metrics:
+        artifactType:
+          schemaTitle: system.Metrics
+          schemaVersion: 0.0.1
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.9.0
