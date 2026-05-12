@@ -2379,8 +2379,7 @@ root:
             producerSubtask: train-model
     tasks:
       evaluate-model:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model
         dependentTasks:
@@ -2406,8 +2405,7 @@ root:
         taskInfo:
           name: evaluate-model
       evaluate-model-2:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-2
         dependentTasks:
@@ -2433,8 +2431,7 @@ root:
         taskInfo:
           name: evaluate-model-2
       evaluate-model-3:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-3
         dependentTasks:
@@ -2460,8 +2457,7 @@ root:
         taskInfo:
           name: evaluate-model-3
       evaluate-model-4:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-4
         dependentTasks:
@@ -2487,8 +2483,7 @@ root:
         taskInfo:
           name: evaluate-model-4
       evaluate-model-5:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-5
         dependentTasks:
@@ -2514,8 +2509,7 @@ root:
         taskInfo:
           name: evaluate-model-5
       evaluate-model-6:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-6
         dependentTasks:
@@ -2541,8 +2535,7 @@ root:
         taskInfo:
           name: evaluate-model-6
       evaluate-model-7:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-7
         dependentTasks:
@@ -2568,8 +2561,7 @@ root:
         taskInfo:
           name: evaluate-model-7
       evaluate-model-8:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-8
         dependentTasks:
@@ -2595,8 +2587,7 @@ root:
         taskInfo:
           name: evaluate-model-8
       evaluate-model-9:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-evaluate-model-9
         dependentTasks:
@@ -2622,15 +2613,13 @@ root:
         taskInfo:
           name: evaluate-model-9
       load-data:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-load-data
         taskInfo:
           name: load-data
       train-model:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model
         dependentTasks:
@@ -2657,8 +2646,7 @@ root:
         taskInfo:
           name: train-model
       train-model-2:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-2
         dependentTasks:
@@ -2685,8 +2673,7 @@ root:
         taskInfo:
           name: train-model-2
       train-model-3:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-3
         dependentTasks:
@@ -2713,8 +2700,7 @@ root:
         taskInfo:
           name: train-model-3
       train-model-4:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-4
         dependentTasks:
@@ -2741,8 +2727,7 @@ root:
         taskInfo:
           name: train-model-4
       train-model-5:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-5
         dependentTasks:
@@ -2769,8 +2754,7 @@ root:
         taskInfo:
           name: train-model-5
       train-model-6:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-6
         dependentTasks:
@@ -2797,8 +2781,7 @@ root:
         taskInfo:
           name: train-model-6
       train-model-7:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-7
         dependentTasks:
@@ -2825,8 +2808,7 @@ root:
         taskInfo:
           name: train-model-7
       train-model-8:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-8
         dependentTasks:
@@ -2853,8 +2835,7 @@ root:
         taskInfo:
           name: train-model-8
       train-model-9:
-        cachingOptions:
-          enableCache: true
+        cachingOptions: {}
         componentRef:
           name: comp-train-model-9
         dependentTasks:

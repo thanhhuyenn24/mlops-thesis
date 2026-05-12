@@ -4,12 +4,13 @@ Model: vinai/phobert-base + Linear(768→3)
 Dataset: UIT-VSFC full (train/val/test split chuẩn)
 Pipeline: load_data >> preprocess >> train_model >> evaluate_model
 Metrics: accuracy, F1-macro, train_time, eval_time
+
+Fix: dùng JSON + torch.save thay pickle để truyền data giữa containers
 """
 
 from kfp import dsl, compiler
 from kfp.dsl import Output, Input, Metrics, Model, Dataset
 
-# ── Packages ─────────────────────────────────────────────────────────────────
 BASE_PACKAGES = [
     "numpy<2.0",
     "torch==2.2.2+cpu",
@@ -23,20 +24,7 @@ PIP_URLS = [
     "https://pypi.org/simple",
 ]
 
-# ── Config — đồng nhất với Airflow/MLflow/Metaflow ───────────────────────────
-PHOBERT_MODEL_NAME = "vinai/phobert-base"
-NUM_LABELS         = 3
-MAX_LENGTH         = 256
-LR                 = 2e-5
-BATCH_SIZE         = 8
-EPOCHS             = 3
-WEIGHT_DECAY       = 0.01
-DATASET_NAME       = "uitnlp/vietnamese_students_feedback"
-TEXT_COL           = "sentence"
-LABEL_COL          = "sentiment"
 
-
-# ── Step 1: Load data ────────────────────────────────────────────────────────
 @dsl.component(
     base_image="python:3.11-slim",
     packages_to_install=BASE_PACKAGES,
@@ -47,37 +35,35 @@ def load_data(
     output_val:   Output[Dataset],
     output_test:  Output[Dataset],
 ):
-    """Load UIT-VSFC từ HuggingFace, dùng split chuẩn."""
+    """Load UIT-VSFC, save dưới dạng JSON — không dùng pickle."""
     import time
-    import pickle
-    import shutil
-    import os
+    import json
     from datasets import load_dataset
 
-    cache_dir = "/root/.cache/huggingface/datasets/uitnlp___vietnamese_students_feedback"
-    if os.path.exists(cache_dir):
-        shutil.rmtree(cache_dir)
-        print(f"[load_data] Cleared old cache at {cache_dir}")
-
     t0 = time.time()
-    print("[load_data] Loading UIT-VSFC...")
+    print("[load_data] Loading UIT-VSFC from HuggingFace...")
 
-    dataset = load_dataset("uitnlp/vietnamese_students_feedback", download_mode="force_redownload")
+    dataset  = load_dataset("uitnlp/vietnamese_students_feedback")
     train_ds = dataset['train']
     val_ds   = dataset['validation']
     test_ds  = dataset['test']
 
     print(f"[load_data] Train: {len(train_ds)}, Val: {len(val_ds)}, Test: {len(test_ds)}")
 
-    with open(output_train.path, 'wb') as f: pickle.dump(train_ds, f)
-    with open(output_val.path,   'wb') as f: pickle.dump(val_ds,   f)
-    with open(output_test.path,  'wb') as f: pickle.dump(test_ds,  f)
+    def save_json(ds, path):
+        data = [{"sentence": row["sentence"], "sentiment": int(row["sentiment"])}
+                for row in ds]
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False)
+
+    save_json(train_ds, output_train.path)
+    save_json(val_ds,   output_val.path)
+    save_json(test_ds,  output_test.path)
 
     elapsed = round(time.time() - t0, 3)
     print(f"[load_data] done. time={elapsed}s")
 
 
-# ── Step 2: Preprocess ───────────────────────────────────────────────────────
 @dsl.component(
     base_image="python:3.11-slim",
     packages_to_install=BASE_PACKAGES,
@@ -91,60 +77,50 @@ def preprocess(
     output_val_tok:   Output[Dataset],
     output_test_tok:  Output[Dataset],
 ):
+    """Tokenize với PhoBERT tokenizer, save tensors dưới dạng .pt."""
     import time
-    import pickle
-    import shutil
-    import os
+    import json
+    import torch
     from transformers import AutoTokenizer
-
-    cache_dir = "/root/.cache/huggingface/datasets"
-    if os.path.exists(cache_dir):
-        shutil.rmtree(cache_dir)
 
     PHOBERT_MODEL_NAME = "vinai/phobert-base"
     MAX_LENGTH         = 256
-    TEXT_COL           = "sentence"
-    LABEL_COL          = "sentiment"
 
     t0 = time.time()
-    print("[preprocess] Loading PhoBERT tokenizer...")
+    print("[preprocess] Loading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(PHOBERT_MODEL_NAME)
 
-    def tokenize(dataset):
-        tokenized = dataset.map(
-            lambda x: tokenizer(
-                x[TEXT_COL],
-                padding='max_length',
-                truncation=True,
-                max_length=MAX_LENGTH,
-            ),
-            batched=True,
+    def load_and_tokenize(path, output_path):
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        sentences  = [d["sentence"] for d in data]
+        sentiments = [d["sentiment"] for d in data]
+
+        encoded = tokenizer(
+            sentences,
+            padding='max_length',
+            truncation=True,
+            max_length=MAX_LENGTH,
+            return_tensors='pt',
         )
-        tokenized = tokenized.remove_columns(
-            [c for c in tokenized.column_names
-             if c not in ['input_ids', 'attention_mask', LABEL_COL]]
-        )
-        tokenized.set_format(type='torch', columns=['input_ids', 'attention_mask', LABEL_COL])
-        return tokenized
 
-    with open(input_train.path, 'rb') as f: train_ds = pickle.load(f)
-    with open(input_val.path,   'rb') as f: val_ds   = pickle.load(f)
-    with open(input_test.path,  'rb') as f: test_ds  = pickle.load(f)
+        result = {
+            'input_ids':      encoded['input_ids'],
+            'attention_mask': encoded['attention_mask'],
+            'labels':         torch.tensor(sentiments, dtype=torch.long),
+        }
+        torch.save(result, output_path)
+        print(f"  Tokenized {len(sentences)} samples")
 
-    print("[preprocess] Tokenizing...")
-    train_tok = tokenize(train_ds)
-    val_tok   = tokenize(val_ds)
-    test_tok  = tokenize(test_ds)
-
-    with open(output_train_tok.path, 'wb') as f: pickle.dump(train_tok, f)
-    with open(output_val_tok.path,   'wb') as f: pickle.dump(val_tok,   f)
-    with open(output_test_tok.path,  'wb') as f: pickle.dump(test_tok,  f)
+    load_and_tokenize(input_train.path, output_train_tok.path)
+    load_and_tokenize(input_val.path,   output_val_tok.path)
+    load_and_tokenize(input_test.path,  output_test_tok.path)
 
     elapsed = round(time.time() - t0, 3)
     print(f"[preprocess] done. time={elapsed}s")
 
 
-# ── Step 3: Train model ──────────────────────────────────────────────────────
 @dsl.component(
     base_image="python:3.11-slim",
     packages_to_install=BASE_PACKAGES,
@@ -156,12 +132,11 @@ def train_model(
     output_model:    Output[Model],
     output_metrics:  Output[Metrics],
 ):
-    """Fine-tune PhoBERT-base + Linear(768→3) trên UIT-VSFC train set."""
+    """Fine-tune PhoBERT-base + Linear(768→3)."""
     import time
-    import pickle
     import torch
     import torch.nn as nn
-    from torch.utils.data import DataLoader
+    from torch.utils.data import TensorDataset, DataLoader
     from transformers import AutoModel
     from torch.optim import AdamW
 
@@ -171,10 +146,20 @@ def train_model(
     BATCH_SIZE         = 8
     EPOCHS             = 3
     WEIGHT_DECAY       = 0.01
-    LABEL_COL          = "sentiment"
 
-    with open(input_train_tok.path, 'rb') as f: train_ds = pickle.load(f)
-    with open(input_val_tok.path,   'rb') as f: val_ds   = pickle.load(f)
+    train_data = torch.load(input_train_tok.path)
+    val_data   = torch.load(input_val_tok.path)
+
+    train_ds = TensorDataset(
+        train_data['input_ids'],
+        train_data['attention_mask'],
+        train_data['labels'],
+    )
+    val_ds = TensorDataset(
+        val_data['input_ids'],
+        val_data['attention_mask'],
+        val_data['labels'],
+    )
 
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
     val_loader   = DataLoader(val_ds,   batch_size=BATCH_SIZE)
@@ -184,47 +169,44 @@ def train_model(
             super().__init__()
             self.phobert    = AutoModel.from_pretrained(PHOBERT_MODEL_NAME)
             self.classifier = nn.Linear(768, NUM_LABELS)
-            # Gradient checkpointing để tiết kiệm RAM
             self.phobert.gradient_checkpointing_enable()
 
         def forward(self, input_ids, attention_mask):
             out = self.phobert(input_ids=input_ids, attention_mask=attention_mask)
-            cls = out.last_hidden_state[:, 0, :]
-            return self.classifier(cls)
+            return self.classifier(out.last_hidden_state[:, 0, :])
 
+    torch.manual_seed(42)
     device    = torch.device('cpu')
     model     = PhoBERTClassifier().to(device)
     optimizer = AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     criterion = nn.CrossEntropyLoss()
 
-    print(f"[train] Fine-tuning PhoBERT — epochs={EPOCHS} lr={LR} batch={BATCH_SIZE} device=cpu")
+    print(f"[train] epochs={EPOCHS} lr={LR} batch={BATCH_SIZE} device=cpu")
 
     t0 = time.time()
+    avg_loss = 0.0
     for epoch in range(EPOCHS):
         model.train()
         total_loss = 0
-        for batch in train_loader:
-            input_ids      = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            labels         = batch[LABEL_COL].to(device)
-
+        for input_ids, attention_mask, labels in train_loader:
+            input_ids      = input_ids.to(device)
+            attention_mask = attention_mask.to(device)
+            labels         = labels.to(device)
             optimizer.zero_grad()
-            logits = model(input_ids, attention_mask)
-            loss   = criterion(logits, labels)
+            loss = criterion(model(input_ids, attention_mask), labels)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
 
         avg_loss = total_loss / len(train_loader)
 
-        # Validation
         model.eval()
         val_loss = 0
         with torch.no_grad():
-            for batch in val_loader:
-                input_ids      = batch['input_ids'].to(device)
-                attention_mask = batch['attention_mask'].to(device)
-                labels         = batch[LABEL_COL].to(device)
+            for input_ids, attention_mask, labels in val_loader:
+                input_ids      = input_ids.to(device)
+                attention_mask = attention_mask.to(device)
+                labels         = labels.to(device)
                 val_loss      += criterion(model(input_ids, attention_mask), labels).item()
 
         print(f"  Epoch {epoch+1}/{EPOCHS} — train_loss: {avg_loss:.4f}, val_loss: {val_loss/len(val_loader):.4f}")
@@ -237,7 +219,6 @@ def train_model(
     output_metrics.log_metric("final_loss",         round(avg_loss, 4))
 
 
-# ── Step 4: Evaluate ─────────────────────────────────────────────────────────
 @dsl.component(
     base_image="python:3.11-slim",
     packages_to_install=BASE_PACKAGES,
@@ -248,21 +229,24 @@ def evaluate_model(
     input_model:    Input[Model],
     output_metrics: Output[Metrics],
 ):
-    """Evaluate PhoBERT trên test set, log accuracy + F1-macro."""
+    """Evaluate trên test set, log accuracy + F1-macro."""
     import time
-    import pickle
     import torch
     import torch.nn as nn
-    from torch.utils.data import DataLoader
+    from torch.utils.data import TensorDataset, DataLoader
     from transformers import AutoModel
     from sklearn.metrics import accuracy_score, f1_score
 
     PHOBERT_MODEL_NAME = "vinai/phobert-base"
     NUM_LABELS         = 3
     BATCH_SIZE         = 8
-    LABEL_COL          = "sentiment"
 
-    with open(input_test_tok.path, 'rb') as f: test_ds = pickle.load(f)
+    test_data = torch.load(input_test_tok.path)
+    test_ds   = TensorDataset(
+        test_data['input_ids'],
+        test_data['attention_mask'],
+        test_data['labels'],
+    )
     test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE)
 
     class PhoBERTClassifier(nn.Module):
@@ -273,8 +257,7 @@ def evaluate_model(
 
         def forward(self, input_ids, attention_mask):
             out = self.phobert(input_ids=input_ids, attention_mask=attention_mask)
-            cls = out.last_hidden_state[:, 0, :]
-            return self.classifier(cls)
+            return self.classifier(out.last_hidden_state[:, 0, :])
 
     device = torch.device('cpu')
     model  = PhoBERTClassifier().to(device)
@@ -284,11 +267,8 @@ def evaluate_model(
     all_preds, all_labels = [], []
     t0 = time.time()
     with torch.no_grad():
-        for batch in test_loader:
-            input_ids      = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            labels         = batch[LABEL_COL]
-            preds          = model(input_ids, attention_mask).argmax(dim=1).cpu()
+        for input_ids, attention_mask, labels in test_loader:
+            preds = model(input_ids.to(device), attention_mask.to(device)).argmax(dim=1).cpu()
             all_preds.extend(preds.numpy())
             all_labels.extend(labels.numpy())
 
@@ -296,8 +276,8 @@ def evaluate_model(
     accuracy  = round(accuracy_score(all_labels, all_preds) * 100, 4)
     f1        = round(f1_score(all_labels, all_preds, average='macro') * 100, 4)
 
-    print(f"[evaluate] Accuracy: {accuracy:.4f}%")
-    print(f"[evaluate] F1-macro: {f1:.4f}%")
+    print(f"[evaluate] Accuracy:  {accuracy:.4f}%")
+    print(f"[evaluate] F1-macro:  {f1:.4f}%")
     print(f"[evaluate] Eval time: {eval_time}s")
 
     output_metrics.log_metric("accuracy",          accuracy)
@@ -305,7 +285,6 @@ def evaluate_model(
     output_metrics.log_metric("eval_time_seconds", eval_time)
 
 
-# ── Pipeline definition ───────────────────────────────────────────────────────
 @dsl.pipeline(
     name="phobert-sentiment-kubeflow",
     description="UC2 PhoBERT fine-tune — UIT-VSFC full, 3 epochs, CPU",
@@ -321,7 +300,7 @@ def phobert_pipeline():
         input_val=load_task.outputs["output_val"],
         input_test=load_task.outputs["output_test"],
     )
-    prep_task.set_memory_limit("4Gi")
+    prep_task.set_memory_limit("8Gi")
     prep_task.set_cpu_limit("2")
     prep_task.set_caching_options(enable_caching=False)
     prep_task.after(load_task)
