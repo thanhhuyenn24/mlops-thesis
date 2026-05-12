@@ -245,12 +245,13 @@ deploymentSpec:
           \ *\n\ndef preprocess(\n    input_train: Input[Dataset],\n    input_val:\
           \   Input[Dataset],\n    input_test:  Input[Dataset],\n    output_train_tok:\
           \ Output[Dataset],\n    output_val_tok:   Output[Dataset],\n    output_test_tok:\
-          \  Output[Dataset],\n):\n    \"\"\"Tokenize UIT-VSFC v\u1EDBi PhoBERT tokenizer.\"\
-          \"\"\n    import time\n    import pickle\n    from transformers import AutoTokenizer\n\
-          \n    PHOBERT_MODEL_NAME = \"vinai/phobert-base\"\n    MAX_LENGTH      \
-          \   = 256\n    TEXT_COL           = \"sentence\"\n    LABEL_COL        \
-          \  = \"sentiment\"\n\n    t0 = time.time()\n    print(\"[preprocess] Loading\
-          \ PhoBERT tokenizer...\")\n    tokenizer = AutoTokenizer.from_pretrained(PHOBERT_MODEL_NAME)\n\
+          \  Output[Dataset],\n):\n    import time\n    import pickle\n    import\
+          \ shutil\n    import os\n    from transformers import AutoTokenizer\n\n\
+          \    cache_dir = \"/root/.cache/huggingface/datasets\"\n    if os.path.exists(cache_dir):\n\
+          \        shutil.rmtree(cache_dir)\n\n    PHOBERT_MODEL_NAME = \"vinai/phobert-base\"\
+          \n    MAX_LENGTH         = 256\n    TEXT_COL           = \"sentence\"\n\
+          \    LABEL_COL          = \"sentiment\"\n\n    t0 = time.time()\n    print(\"\
+          [preprocess] Loading PhoBERT tokenizer...\")\n    tokenizer = AutoTokenizer.from_pretrained(PHOBERT_MODEL_NAME)\n\
           \n    def tokenize(dataset):\n        tokenized = dataset.map(\n       \
           \     lambda x: tokenizer(\n                x[TEXT_COL],\n             \
           \   padding='max_length',\n                truncation=True,\n          \

@@ -91,10 +91,15 @@ def preprocess(
     output_val_tok:   Output[Dataset],
     output_test_tok:  Output[Dataset],
 ):
-    """Tokenize UIT-VSFC với PhoBERT tokenizer."""
     import time
     import pickle
+    import shutil
+    import os
     from transformers import AutoTokenizer
+
+    cache_dir = "/root/.cache/huggingface/datasets"
+    if os.path.exists(cache_dir):
+        shutil.rmtree(cache_dir)
 
     PHOBERT_MODEL_NAME = "vinai/phobert-base"
     MAX_LENGTH         = 256
