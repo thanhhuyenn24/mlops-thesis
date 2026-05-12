@@ -278,6 +278,7 @@ def mnist_pipeline(
 ):
     # Step 1: load data một lần, dùng chung cho tất cả runs
     load_task = load_data()
+    load_task.set_caching_options(enable_caching=False)
     load_task.set_memory_limit("1Gi")
     load_task.set_cpu_limit("1")
 
@@ -291,6 +292,7 @@ def mnist_pipeline(
                 learning_rate=learning_rate,
                 batch_size=batch_size,
             )
+            train_task.set_caching_options(enable_caching=False)
             train_task.set_memory_limit("2Gi")
             train_task.set_cpu_limit("2")
             train_task.after(load_task)
@@ -301,6 +303,7 @@ def mnist_pipeline(
                 model_name=model_name,
                 run_id=run_id,
             )
+            eval_task.set_caching_options(enable_caching=False)
             eval_task.set_memory_limit("1Gi")
             eval_task.set_cpu_limit("1")
             eval_task.after(train_task)
