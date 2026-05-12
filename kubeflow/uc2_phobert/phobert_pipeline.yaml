@@ -196,8 +196,8 @@ deploymentSpec:
           Load UIT-VSFC t\u1EEB HuggingFace, d\xF9ng split chu\u1EA9n.\"\"\"\n   \
           \ import time\n    import pickle\n    from datasets import load_dataset\n\
           \n    t0 = time.time()\n    print(\"[load_data] Loading UIT-VSFC...\")\n\
-          \n    dataset  = load_dataset(\"uitnlp/vietnamese_students_feedback\")\n\
-          \    train_ds = dataset['train']\n    val_ds   = dataset['validation']\n\
+          \n    dataset = load_dataset(\"uitnlp/vietnamese_students_feedback\", download_mode=\"\
+          force_redownload\")\n    train_ds = dataset['train']\n    val_ds   = dataset['validation']\n\
           \    test_ds  = dataset['test']\n\n    print(f\"[load_data] Train: {len(train_ds)},\
           \ Val: {len(val_ds)}, Test: {len(test_ds)}\")\n\n    with open(output_train.path,\
           \ 'wb') as f: pickle.dump(train_ds, f)\n    with open(output_val.path, \

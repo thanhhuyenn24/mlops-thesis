@@ -55,7 +55,7 @@ def load_data(
     t0 = time.time()
     print("[load_data] Loading UIT-VSFC...")
 
-    dataset  = load_dataset("uitnlp/vietnamese_students_feedback")
+    dataset = load_dataset("uitnlp/vietnamese_students_feedback", download_mode="force_redownload")
     train_ds = dataset['train']
     val_ds   = dataset['validation']
     test_ds  = dataset['test']
