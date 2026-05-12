@@ -194,8 +194,8 @@ deploymentSpec:
           \ *\n\ndef load_data(\n    output_train: Output[Dataset],\n    output_val:\
           \   Output[Dataset],\n    output_test:  Output[Dataset],\n):\n    \"\"\"\
           Load UIT-VSFC t\u1EEB HuggingFace, d\xF9ng split chu\u1EA9n.\"\"\"\n   \
-          \ import time\n    import pickle\n    from datasets import load_dataset\n\
-          \n    cache_dir = \"/root/.cache/huggingface/datasets/uitnlp___vietnamese_students_feedback\"\
+          \ import time\n    import pickle\n    import shutil\n    import os\n   \
+          \ from datasets import load_dataset\n\n    cache_dir = \"/root/.cache/huggingface/datasets/uitnlp___vietnamese_students_feedback\"\
           \n    if os.path.exists(cache_dir):\n        shutil.rmtree(cache_dir)\n\
           \        print(f\"[load_data] Cleared old cache at {cache_dir}\")\n\n  \
           \  t0 = time.time()\n    print(\"[load_data] Loading UIT-VSFC...\")\n\n\

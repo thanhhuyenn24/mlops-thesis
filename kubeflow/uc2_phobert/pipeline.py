@@ -50,6 +50,8 @@ def load_data(
     """Load UIT-VSFC từ HuggingFace, dùng split chuẩn."""
     import time
     import pickle
+    import shutil
+    import os
     from datasets import load_dataset
 
     cache_dir = "/root/.cache/huggingface/datasets/uitnlp___vietnamese_students_feedback"
