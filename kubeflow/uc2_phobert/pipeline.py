@@ -52,6 +52,11 @@ def load_data(
     import pickle
     from datasets import load_dataset
 
+    cache_dir = "/root/.cache/huggingface/datasets/uitnlp___vietnamese_students_feedback"
+    if os.path.exists(cache_dir):
+        shutil.rmtree(cache_dir)
+        print(f"[load_data] Cleared old cache at {cache_dir}")
+
     t0 = time.time()
     print("[load_data] Loading UIT-VSFC...")
 
