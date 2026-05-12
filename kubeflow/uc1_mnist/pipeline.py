@@ -235,7 +235,7 @@ def evaluate_model(
     test_labels = data["test_labels"]
 
     test_ds     = TensorDataset(test_images, test_labels)
-    test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)
+    test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
 
     # ── Evaluate ─────────────────────────────────────────────────────────────
     model = MODEL_CLASSES[model_name]()

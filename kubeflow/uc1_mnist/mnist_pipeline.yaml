@@ -576,13 +576,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -672,13 +672,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -768,13 +768,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -864,13 +864,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -960,13 +960,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -1056,13 +1056,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -1152,13 +1152,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -1248,13 +1248,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
@@ -1344,13 +1344,13 @@ deploymentSpec:
           \u2500\u2500\n    data        = torch.load(input_dataset.path)\n    test_images\
           \ = data[\"test_images\"].unsqueeze(1)\n    test_labels = data[\"test_labels\"\
           ]\n\n    test_ds     = TensorDataset(test_images, test_labels)\n    test_loader\
-          \ = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)\n\n    # \u2500\
-          \u2500 Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+          \ = DataLoader(test_ds, batch_size=64, shuffle=False)\n\n    # \u2500\u2500\
+          \ Evaluate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
-          \u2500\u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
+          \u2500\u2500\n    model = MODEL_CLASSES[model_name]()\n    model.load_state_dict(torch.load(input_model.path,\
           \ map_location=\"cpu\"))\n    model.eval()\n\n    all_preds, all_labels\
           \ = [], []\n    t0 = time.time()\n    with torch.no_grad():\n        for\
           \ images, labels in test_loader:\n            preds = model(images).argmax(dim=1)\n\
