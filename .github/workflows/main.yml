@@ -6,6 +6,8 @@ on:
       - 'airflow/**'
       - 'shared/**'
       - 'kubeflow/**'
+      - 'mlflow/**'
+      - 'metaflow/**'
 
 jobs:
   airflow_job:

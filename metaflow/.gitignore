@@ -1,0 +1,6 @@
+# Ignore data downloads and temp files
+data/
+.metaflow/
+results_*/
+__pycache__/
+*.pyc
