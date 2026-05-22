@@ -1,12 +1,12 @@
 """
 UC1 — MNIST Classification — Apache Airflow
 Pipeline: load_data >> train_model >> evaluate_model
-Chạy 3 lần × 3 models = 9 runs, log accuracy + F1 + timing
+3 models (SimpleNN, DeepNN, CNN) × 3 runs = 9 runs
+Metrics: accuracy, F1-macro, train_time, eval_time
 """
 
 import sys
-import os
-sys.path.insert(0, '/opt/airflow/dags/shared')
+sys.path.insert(0, '/home/airflow/airflowServer/dags/shared')
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -17,20 +17,15 @@ default_args = {
     'start_date': datetime(2024, 1, 1),
 }
 
-# ── Hyperparameters & config từ shared file ──────────────────────────────────
-LR         = 0.001
-BATCH_SIZE = 64
-EPOCHS     = 10
-MODELS     = ["SimpleNN", "DeepNN", "CNN"]
-NUM_RUNS   = 3   # mỗi model chạy 3 lần → 9 runs tổng
-
 
 # ── Step 1: Load data ────────────────────────────────────────────────────────
 def load_data(**kwargs):
+    import sys
+    sys.path.insert(0, '/home/airflow/airflowServer/dags/shared')
+
     import time
     from torchvision import datasets, transforms
-    from torch.utils.data import DataLoader
-    import pickle
+    from models_mnist import HPARAMS
 
     t0 = time.time()
     transform = transforms.Compose([transforms.ToTensor()])
@@ -40,16 +35,18 @@ def load_data(**kwargs):
     test_ds  = datasets.MNIST(root='/tmp/mnist_data', train=False,
                                download=True, transform=transform)
 
-    # Lưu đường dẫn dataset, không truyền DataLoader qua XCom
-    elapsed = time.time() - t0
-    print(f"[load_data] MNIST downloaded. Train: {len(train_ds)}, Test: {len(test_ds)}, Time: {elapsed:.2f}s")
+    elapsed = round(time.time() - t0, 3)
+    print(f"[load_data] Train: {len(train_ds)}, Test: {len(test_ds)}, time={elapsed}s")
 
     kwargs['ti'].xcom_push(key='data_root',   value='/tmp/mnist_data')
-    kwargs['ti'].xcom_push(key='load_time_s', value=round(elapsed, 3))
+    kwargs['ti'].xcom_push(key='load_time_s', value=elapsed)
 
 
 # ── Step 2: Train model ──────────────────────────────────────────────────────
 def train_model(**kwargs):
+    import sys
+    sys.path.insert(0, '/home/airflow/airflowServer/dags/shared')
+
     import torch
     import torch.nn as nn
     import torch.optim as optim
@@ -57,17 +54,20 @@ def train_model(**kwargs):
     from torch.utils.data import DataLoader
     import time
     import json
+    from models_mnist import MODEL_CLASSES, HPARAMS
 
-    # Import shared model definitions
-    from models_mnist import MODEL_CLASSES
-
-    ti        = kwargs['ti']
+    ti         = kwargs['ti']
     model_name = kwargs['model_name']
     run_id     = kwargs['run_id']
     data_root  = ti.xcom_pull(key='data_root', task_ids='load_data')
 
+    LR         = HPARAMS['lr']
+    BATCH_SIZE = HPARAMS['batch_size']
+    EPOCHS     = HPARAMS['epochs']
+
     transform    = transforms.Compose([transforms.ToTensor()])
-    train_ds     = datasets.MNIST(root=data_root, train=True, download=False, transform=transform)
+    train_ds     = datasets.MNIST(root=data_root, train=True,
+                                   download=False, transform=transform)
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
 
     model     = MODEL_CLASSES[model_name]()
@@ -77,7 +77,6 @@ def train_model(**kwargs):
     print(f"[train] model={model_name} run={run_id} epochs={EPOCHS} lr={LR} batch={BATCH_SIZE}")
 
     t0 = time.time()
-    history = []
     for epoch in range(EPOCHS):
         model.train()
         total_loss = 0
@@ -89,7 +88,6 @@ def train_model(**kwargs):
             optimizer.step()
             total_loss += loss.item()
         avg_loss = total_loss / len(train_loader)
-        history.append(avg_loss)
         print(f"  Epoch {epoch+1}/{EPOCHS} — loss: {avg_loss:.4f}")
 
     train_time = round(time.time() - t0, 3)
@@ -101,24 +99,26 @@ def train_model(**kwargs):
     xcom_key = f'{model_name}_run{run_id}'
     ti.xcom_push(key=f'{xcom_key}_model_path',  value=model_path)
     ti.xcom_push(key=f'{xcom_key}_train_time',  value=train_time)
-    ti.xcom_push(key=f'{xcom_key}_loss_history', value=json.dumps(history))
 
 
 # ── Step 3: Evaluate model ───────────────────────────────────────────────────
 def evaluate_model(**kwargs):
+    import sys
+    sys.path.insert(0, '/home/airflow/airflowServer/dags/shared')
+
     import torch
-    import torch.nn as nn
     from torchvision import datasets, transforms
     from torch.utils.data import DataLoader
     from sklearn.metrics import accuracy_score, f1_score
     import time
-
-    from models_mnist import MODEL_CLASSES
+    from models_mnist import MODEL_CLASSES, HPARAMS
 
     ti         = kwargs['ti']
     model_name = kwargs['model_name']
     run_id     = kwargs['run_id']
     data_root  = ti.xcom_pull(key='data_root', task_ids='load_data')
+
+    BATCH_SIZE = HPARAMS['batch_size']
     xcom_key   = f'{model_name}_run{run_id}'
     model_path = ti.xcom_pull(key=f'{xcom_key}_model_path',
                                task_ids=f'train_{model_name}_run{run_id}')
@@ -126,7 +126,8 @@ def evaluate_model(**kwargs):
                                task_ids=f'train_{model_name}_run{run_id}')
 
     transform   = transforms.Compose([transforms.ToTensor()])
-    test_ds     = datasets.MNIST(root=data_root, train=False, download=False, transform=transform)
+    test_ds     = datasets.MNIST(root=data_root, train=False,
+                                  download=False, transform=transform)
     test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)
 
     model = MODEL_CLASSES[model_name]()
@@ -151,16 +152,15 @@ def evaluate_model(**kwargs):
     print(f"  F1-macro:   {f1:.4f}%")
     print(f"  Train time: {train_time}s")
     print(f"  Eval time:  {eval_time}s")
-    print(f"  Total time: {round(train_time + eval_time, 3)}s")
+    print(f"  Total time: {round(float(train_time) + eval_time, 3)}s")
 
-    # Push metrics — dễ collect sau
     xk = f'{model_name}_run{run_id}'
     ti.xcom_push(key=f'{xk}_accuracy',  value=accuracy)
     ti.xcom_push(key=f'{xk}_f1',        value=f1)
     ti.xcom_push(key=f'{xk}_eval_time', value=eval_time)
 
 
-# ── DAG definition ───────────────────────────────────────────────────────────
+# ── DAG definition ────────────────────────────────────────────────────────────
 with DAG(
     dag_id='mnist_classification_airflow',
     default_args=default_args,
@@ -175,8 +175,8 @@ with DAG(
         python_callable=load_data,
     )
 
-    for model_name in MODELS:
-        for run_id in range(1, NUM_RUNS + 1):
+    for model_name in ["SimpleNN", "DeepNN", "CNN"]:
+        for run_id in range(1, 4):
             t_train = PythonOperator(
                 task_id=f'train_{model_name}_run{run_id}',
                 python_callable=train_model,
