@@ -339,6 +339,7 @@ with DAG(
     schedule_interval=None,
     catchup         =False,
     tags            =['phobert', 'sentiment', 'uc2', 'tc2', 'tc7'],
+    max_active_tasks=1,
 ) as dag:
 
     for run_type, run_idx, hparams in RUN_GROUPS:

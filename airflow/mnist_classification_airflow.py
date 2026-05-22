@@ -204,6 +204,7 @@ with DAG(
     schedule_interval=None,
     catchup         =False,
     tags            =['mnist', 'pytorch', 'uc1', 'tc2', 'tc7'],
+    max_active_tasks=1,
 ) as dag:
 
     t_load = PythonOperator(
