@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Metaflow local datastore
+.metaflow/
+
+# MLflow local
+mlruns/
+mlflow.db
