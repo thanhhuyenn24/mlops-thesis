@@ -191,7 +191,7 @@ BASELINE_RUNS = [
 ]
 
 SWEEP_RUNS = [
-    ('SimpleNN', i + 1, TC2_CONFIGS[i])
+    ('SimpleNN', f'sweep{i + 1}', TC2_CONFIGS[i])
     for i in range(len(TC2_CONFIGS))
 ]
 
