@@ -90,3 +90,16 @@ MODEL_CLASSES = {
     "DeepNN":   DeepNN,
     "CNN":      CNN,
 }
+
+# Models để chạy phần repeat (TC7) — cùng thứ tự trên mọi framework
+MODELS = ["SimpleNN", "DeepNN", "CNN"]
+
+# Số lần lặp mỗi model trong phần repeat
+NUM_RUNS = 3
+
+# TC2 — config sweep dùng SimpleNN
+TC2_CONFIGS = [
+    {"lr": 0.001, "batch_size": 32,  "epochs": 10},
+    {"lr": 0.01,  "batch_size": 64,  "epochs": 10},
+    {"lr": 0.05,  "batch_size": 128, "epochs": 10},
+]
