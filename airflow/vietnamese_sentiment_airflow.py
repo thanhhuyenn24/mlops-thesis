@@ -159,12 +159,13 @@ def train_model(run_key: str, hparams: dict, **kwargs):
     train_path   = ti.xcom_pull(key='tok_train_path', task_ids=preproc_id)
     val_path     = ti.xcom_pull(key='tok_val_path',   task_ids=preproc_id)
 
-    LR           = hparams['lr']
-    BATCH_SIZE   = hparams['batch_size']
-    EPOCHS       = hparams['epochs']
-    WEIGHT_DECAY = hparams.get('weight_decay', 0.01)
-    ACCUM_STEPS  = hparams.get('gradient_accumulation_steps', 8)
-    LABEL_COL    = 'sentiment'
+    LR            = hparams['lr']
+    BATCH_SIZE    = hparams['batch_size']
+    EPOCHS        = hparams['epochs']
+    WEIGHT_DECAY  = hparams.get('weight_decay', 0.01)
+    ACCUM_STEPS   = hparams.get('gradient_accumulation_steps', 8)
+    TRAINING_SEED = hparams.get('training_seed', SEED)
+    LABEL_COL     = 'sentiment'
 
     with open(train_path, 'rb') as f: train_ds = pickle.load(f)
     with open(val_path,   'rb') as f: val_ds   = pickle.load(f)
@@ -184,14 +185,18 @@ def train_model(run_key: str, hparams: dict, **kwargs):
             out = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
             return self.classifier(out.last_hidden_state[:, 0, :])
 
-    torch.manual_seed(SEED)
+    torch.manual_seed(TRAINING_SEED)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(TRAINING_SEED)
+
     device    = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model     = PhoBERTClassifier().to(device)
     optimizer = AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     criterion = nn.CrossEntropyLoss()
 
     print(f"[train | {run_key}] device={device} lr={LR} "
-          f"batch={BATCH_SIZE} accum={ACCUM_STEPS} epochs={EPOCHS}")
+      f"batch={BATCH_SIZE} accum={ACCUM_STEPS} epochs={EPOCHS} "
+      f"seed={TRAINING_SEED}")
 
     t0 = time.time()
     for epoch in range(EPOCHS):
@@ -327,9 +332,15 @@ def evaluate_model(run_key: str, hparams: dict, **kwargs):
 from config_phobert import HPARAMS as DEFAULT_HPARAMS
 from config_phobert import TC2_CONFIGS
 
+BASELINE_CONFIGS = [
+    {**DEFAULT_HPARAMS, 'training_seed': 43},
+    {**DEFAULT_HPARAMS, 'training_seed': 44},
+    {**DEFAULT_HPARAMS, 'training_seed': 45},
+]
+
 RUN_GROUPS = (
-    [('baseline', i + 1, DEFAULT_HPARAMS)       for i in range(3)] +
-    [('sweep',    i + 1, TC2_CONFIGS[i])         for i in range(3)]
+    [('baseline', i + 1, BASELINE_CONFIGS[i]) for i in range(3)] +
+    [('sweep',    i + 1, TC2_CONFIGS[i])      for i in range(3)]
 )
 
 with DAG(
