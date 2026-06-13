@@ -8,8 +8,6 @@ on:
       - 'mlflow/**'
       - 'metaflow/**'
       - 'shared/**'
-      - 'uc1_mnist/**'
-      - 'uc2_phobert/**'
   workflow_dispatch:
 
 jobs:
@@ -17,7 +15,7 @@ jobs:
     name: Airflow DAG Sync
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Sync DAGs to Airflow server via rsync
         env:
           SSH_KEY: ${{ secrets.AIRFLOW_SSH_KEY }}
@@ -41,10 +39,10 @@ jobs:
     name: Kubeflow Pipeline Update
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -97,9 +95,9 @@ jobs:
     name: MLflow Code Sync to GCP VM
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Sync MLflow + UC code to GCP VM
+      - name: Sync MLflow code to GCP VM (mlflow-server)
         env:
           SSH_KEY: ${{ secrets.MLFLOW_SSH_KEY }}
           MLFLOW_HOST: ${{ secrets.MLFLOW_HOST }}
@@ -109,32 +107,27 @@ jobs:
 
           ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no \
             doanthao0103@$MLFLOW_HOST \
-            "mkdir -p ~/mlops-thesis/shared ~/mlops-thesis/uc1_mnist ~/mlops-thesis/uc2_phobert ~/mlops-thesis/mlflow ~/mlops-thesis/configs"
+            "mkdir -p ~/mlops-thesis/mlflow ~/mlops-thesis/shared"
 
           rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
             shared/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/shared/
 
           rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
-            uc1_mnist/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/uc1_mnist/
-
-          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
-            uc2_phobert/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/uc2_phobert/
-
-          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
             mlflow/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/mlflow/
 
-          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
-            configs/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/configs/
-
-          echo "MLflow VM sync complete."
+          echo "================================================"
+          echo "MLflow VM sync complete: doanthao0103@$MLFLOW_HOST"
+          echo "  ~/mlops-thesis/shared/"
+          echo "  ~/mlops-thesis/mlflow/"
+          echo "================================================"
 
   metaflow_job:
     name: Metaflow Code Sync to GCP VM
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Sync Metaflow code to GCP VM
+      - name: Sync Metaflow code to GCP VM (metaflow-server)
         env:
           SSH_KEY: ${{ secrets.METAFLOW_SSH_KEY }}
           METAFLOW_HOST: ${{ secrets.METAFLOW_HOST }}
@@ -144,7 +137,7 @@ jobs:
 
           ssh -i /tmp/ssh_key_metaflow -o StrictHostKeyChecking=no \
             doanthao0103@$METAFLOW_HOST \
-            "mkdir -p ~/mlops-thesis/shared ~/mlops-thesis/metaflow"
+            "mkdir -p ~/mlops-thesis/metaflow ~/mlops-thesis/shared"
 
           rsync -avz -e "ssh -i /tmp/ssh_key_metaflow -o StrictHostKeyChecking=no" \
             shared/ doanthao0103@$METAFLOW_HOST:~/mlops-thesis/shared/
@@ -152,4 +145,8 @@ jobs:
           rsync -avz -e "ssh -i /tmp/ssh_key_metaflow -o StrictHostKeyChecking=no" \
             metaflow/ doanthao0103@$METAFLOW_HOST:~/mlops-thesis/metaflow/
 
-          echo "Metaflow VM sync complete."
+          echo "================================================"
+          echo "Metaflow VM sync complete: doanthao0103@$METAFLOW_HOST"
+          echo "  ~/mlops-thesis/shared/"
+          echo "  ~/mlops-thesis/metaflow/"
+          echo "================================================"
