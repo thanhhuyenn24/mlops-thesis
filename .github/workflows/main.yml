@@ -10,6 +10,7 @@ on:
       - 'shared/**'
       - 'uc1_mnist/**'
       - 'uc2_phobert/**'
+  workflow_dispatch:
 
 jobs:
   airflow_job:
