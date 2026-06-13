@@ -4,13 +4,20 @@ on:
     branches: [main]
     paths:
       - 'airflow/**'
-      - 'shared/**'
       - 'kubeflow/**'
+      - 'mlflow/**'
+      - 'metaflow/**'
+      - 'shared/**'
+      - 'uc1_mnist/**'
+      - 'uc2_phobert/**'
 
 jobs:
   airflow_job:
     name: Airflow DAG Sync
     runs-on: ubuntu-latest
+    if: |
+      contains(toJson(github.event.commits.*.modified + github.event.commits.*.added), 'airflow/') ||
+      contains(toJson(github.event.commits.*.modified + github.event.commits.*.added), 'shared/')
     steps:
       - uses: actions/checkout@v3
       - name: Sync DAGs to Airflow server via rsync
@@ -87,3 +94,84 @@ jobs:
             kubeflow/uc2_phobert/phobert_pipeline.yaml
           if-no-files-found: ignore
           retention-days: 30
+
+  mlflow_job:
+    name: MLflow Code Sync to GCP VM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Sync MLflow + UC code to GCP VM
+        env:
+          SSH_KEY: ${{ secrets.MLFLOW_SSH_KEY }}
+          MLFLOW_HOST: ${{ secrets.MLFLOW_HOST }}
+        run: |
+          echo "$SSH_KEY" > /tmp/ssh_key_mlflow
+          chmod 600 /tmp/ssh_key_mlflow
+
+          # Tao thu muc dich neu chua co
+          ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no \
+            doanthao0103@$MLFLOW_HOST \
+            "mkdir -p ~/mlops-thesis/shared ~/mlops-thesis/uc1_mnist ~/mlops-thesis/uc2_phobert ~/mlops-thesis/mlflow ~/mlops-thesis/configs"
+
+          # Sync cac thu muc lien quan den MLflow
+          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
+            shared/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/shared/
+
+          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
+            uc1_mnist/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/uc1_mnist/
+
+          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
+            uc2_phobert/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/uc2_phobert/
+
+          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
+            mlflow/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/mlflow/
+
+          rsync -avz -e "ssh -i /tmp/ssh_key_mlflow -o StrictHostKeyChecking=no" \
+            configs/ doanthao0103@$MLFLOW_HOST:~/mlops-thesis/configs/
+
+          echo "================================================"
+          echo "MLflow VM sync complete: doanthao0103@$MLFLOW_HOST"
+          echo "  ~/mlops-thesis/shared/"
+          echo "  ~/mlops-thesis/uc1_mnist/"
+          echo "  ~/mlops-thesis/uc2_phobert/"
+          echo "  ~/mlops-thesis/mlflow/"
+          echo "To run experiments:"
+          echo "  UC1: python3 ~/mlops-thesis/uc1_mnist/train_uc1.py --mode all"
+          echo "  UC2: python3 ~/mlops-thesis/uc2_phobert/train_uc2.py --mode all"
+          echo "================================================"
+
+  metaflow_job:
+    name: Metaflow Code Sync to GCP VM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Sync Metaflow code to GCP VM
+        env:
+          SSH_KEY: ${{ secrets.METAFLOW_SSH_KEY }}
+          METAFLOW_HOST: ${{ secrets.METAFLOW_HOST }}
+        run: |
+          echo "$SSH_KEY" > /tmp/ssh_key_metaflow
+          chmod 600 /tmp/ssh_key_metaflow
+
+          # Tao thu muc dich neu chua co
+          ssh -i /tmp/ssh_key_metaflow -o StrictHostKeyChecking=no \
+            doanthao0103@$METAFLOW_HOST \
+            "mkdir -p ~/mlops-thesis/shared ~/mlops-thesis/metaflow"
+
+          # Sync cac thu muc lien quan den Metaflow
+          rsync -avz -e "ssh -i /tmp/ssh_key_metaflow -o StrictHostKeyChecking=no" \
+            shared/ doanthao0103@$METAFLOW_HOST:~/mlops-thesis/shared/
+
+          rsync -avz -e "ssh -i /tmp/ssh_key_metaflow -o StrictHostKeyChecking=no" \
+            metaflow/ doanthao0103@$METAFLOW_HOST:~/mlops-thesis/metaflow/
+
+          echo "================================================"
+          echo "Metaflow VM sync complete: doanthao0103@$METAFLOW_HOST"
+          echo "  ~/mlops-thesis/shared/"
+          echo "  ~/mlops-thesis/metaflow/"
+          echo "To run experiments:"
+          echo "  UC1: bash ~/mlops-thesis/metaflow/run_uc1_all.sh"
+          echo "  UC2: bash ~/mlops-thesis/metaflow/run_uc2_all.sh"
+          echo "================================================"
