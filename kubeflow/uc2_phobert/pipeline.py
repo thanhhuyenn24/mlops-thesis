@@ -1,332 +1,304 @@
 """
-UC2 — Vietnamese Sentiment Analysis — Kubeflow Pipelines 2.4.0
-Model: vinai/phobert-base + Linear(768→3)
-Dataset: UIT-VSFC full (train/val/test split chuẩn)
-Pipeline: load_data >> preprocess >> train_model >> evaluate_model
-Metrics: accuracy, F1-macro, train_time, eval_time
-
-Fix: dùng JSON + torch.save thay pickle để truyền data giữa containers
+Kubeflow Pipelines — UC2: Vietnamese Sentiment Analysis (PhoBERT)
+6 runs: 3 baseline + 3 TC2 sweep. 500 stratified samples, SEED=42.
 """
 
-from kfp import dsl, compiler
-from kfp.dsl import Output, Input, Metrics, Model, Dataset
+from kfp import dsl
+from kfp.client import Client
 
-BASE_PACKAGES = [
-    "numpy<2.0",
-    "torch==2.2.2+cpu",
-    "transformers==4.44.0",
-    "datasets==2.19.0",
-    "scikit-learn==1.4.2",
-    "pyarrow==14.0.2",
-]
-PIP_URLS = [
-    "https://download.pytorch.org/whl/cpu",
-    "https://pypi.org/simple",
-]
+PHOBERT_IMAGE = "localhost:32000/kfp-phobert:latest"
 
-
-@dsl.component(
-    base_image="python:3.11-slim",
-    packages_to_install=BASE_PACKAGES,
-    pip_index_urls=PIP_URLS,
-)
-def load_data(
-    output_train: Output[Dataset],
-    output_val:   Output[Dataset],
-    output_test:  Output[Dataset],
-):
-    """Load UIT-VSFC, save dưới dạng JSON — không dùng pickle."""
-    import time
-    import json
-    from datasets import load_dataset
-
-    t0 = time.time()
-    print("[load_data] Loading UIT-VSFC from HuggingFace...")
-
-    dataset  = load_dataset("uitnlp/vietnamese_students_feedback")
-    train_ds = dataset['train']
-    val_ds   = dataset['validation']
-    test_ds  = dataset['test']
-
-    print(f"[load_data] Train: {len(train_ds)}, Val: {len(val_ds)}, Test: {len(test_ds)}")
-
-    def save_json(ds, path):
-        data = [{"sentence": row["sentence"], "sentiment": int(row["sentiment"])}
-                for row in ds]
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False)
-
-    save_json(train_ds, output_train.path)
-    save_json(val_ds,   output_val.path)
-    save_json(test_ds,  output_test.path)
-
-    elapsed = round(time.time() - t0, 3)
-    print(f"[load_data] done. time={elapsed}s")
-
-
-@dsl.component(
-    base_image="python:3.11-slim",
-    packages_to_install=BASE_PACKAGES,
-    pip_index_urls=PIP_URLS,
-)
-def preprocess(
-    input_train: Input[Dataset],
-    input_val:   Input[Dataset],
-    input_test:  Input[Dataset],
-    output_train_tok: Output[Dataset],
-    output_val_tok:   Output[Dataset],
-    output_test_tok:  Output[Dataset],
-):
-    """Tokenize với PhoBERT tokenizer, save tensors dưới dạng .pt."""
-    import time
-    import json
+@dsl.component(base_image=PHOBERT_IMAGE)
+def traineval(
+    lr            : float,
+    batch_size    : int,
+    epochs        : int,
+    run_tag       : str,
+    training_seed : int,
+) -> str:
+    import json, time, requests, os
+    import numpy as np
     import torch
-    from transformers import AutoTokenizer
-
-    PHOBERT_MODEL_NAME = "vinai/phobert-base"
-    MAX_LENGTH         = 256
-
-    t0 = time.time()
-    print("[preprocess] Loading tokenizer...")
-    tokenizer = AutoTokenizer.from_pretrained(PHOBERT_MODEL_NAME)
-
-    def load_and_tokenize(path, output_path):
-        with open(path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        sentences  = [d["sentence"] for d in data]
-        sentiments = [d["sentiment"] for d in data]
-
-        encoded = tokenizer(
-            sentences,
-            padding='max_length',
-            truncation=True,
-            max_length=MAX_LENGTH,
-            return_tensors='pt',
-        )
-
-        result = {
-            'input_ids':      encoded['input_ids'],
-            'attention_mask': encoded['attention_mask'],
-            'labels':         torch.tensor(sentiments, dtype=torch.long),
-        }
-        torch.save(result, output_path)
-        print(f"  Tokenized {len(sentences)} samples")
-
-    load_and_tokenize(input_train.path, output_train_tok.path)
-    load_and_tokenize(input_val.path,   output_val_tok.path)
-    load_and_tokenize(input_test.path,  output_test_tok.path)
-
-    elapsed = round(time.time() - t0, 3)
-    print(f"[preprocess] done. time={elapsed}s")
-
-
-@dsl.component(
-    base_image="python:3.11-slim",
-    packages_to_install=BASE_PACKAGES,
-    pip_index_urls=PIP_URLS,
-)
-def train_model(
-    input_train_tok: Input[Dataset],
-    input_val_tok:   Input[Dataset],
-    output_model:    Output[Model],
-    output_metrics:  Output[Metrics],
-):
-    """Fine-tune PhoBERT-base + Linear(768→3)."""
-    import time
-    import torch
-    import torch.nn as nn
-    from torch.utils.data import TensorDataset, DataLoader
-    from transformers import AutoModel
+    from torch.utils.data import DataLoader, Dataset as TorchDataset
+    from transformers import (
+        AutoTokenizer, AutoModelForSequenceClassification,
+        get_linear_schedule_with_warmup,
+    )
     from torch.optim import AdamW
+    from sklearn.metrics import f1_score
 
-    PHOBERT_MODEL_NAME = "vinai/phobert-base"
-    NUM_LABELS         = 3
-    LR                 = 2e-5
-    BATCH_SIZE         = 8
-    EPOCHS             = 3
-    WEIGHT_DECAY       = 0.01
+    # ── Config ────────────────────────────────────────────────────────────────
+    PHOBERT_MODEL_NAME     = "vinai/phobert-base"
+    NUM_LABELS             = 3
+    MAX_LENGTH             = 128
+    WEIGHT_DECAY           = 0.01
+    ACCUMULATION_STEPS     = 8
+    GRADIENT_CHECKPOINTING = True
+    SAMPLE_SIZE            = 500
+    SEED                   = 42
 
-    train_data = torch.load(input_train_tok.path)
-    val_data   = torch.load(input_val_tok.path)
+    # Cache model locally to avoid re-download on retry
+    os.environ["TRANSFORMERS_CACHE"] = "/tmp/hf_cache"
+    os.makedirs("/tmp/hf_cache", exist_ok=True)
 
-    train_ds = TensorDataset(
-        train_data['input_ids'],
-        train_data['attention_mask'],
-        train_data['labels'],
+    # ── Download dataset with retry + local cache ─────────────────────────────
+    base    = "https://datasets-server.huggingface.co/rows"
+    dataset = "uitnlp/vietnamese_students_feedback"
+
+    def fetch_with_retry(url, params, max_retries=5):
+        for attempt in range(max_retries):
+            try:
+                resp = requests.get(url, params=params, timeout=60)
+                if resp.status_code == 200 and resp.text.strip():
+                    return resp.json()
+                print(f"[WARN] attempt {attempt+1}: status={resp.status_code}")
+            except Exception as e:
+                print(f"[WARN] attempt {attempt+1}: {e}")
+            time.sleep(2 ** attempt)
+        raise RuntimeError(f"Failed to fetch after {max_retries} attempts: {params}")
+
+    def fetch_split(split, limit=10000):
+        # Check local cache first
+        cache_file = f"/tmp/hf_cache/{split}_{limit}.json"
+        if os.path.exists(cache_file):
+            print(f"[INFO] Loading {split} from cache...")
+            with open(cache_file) as f:
+                data = json.load(f)
+            return data["sentences"], data["labels"]
+
+        sentences, labels = [], []
+        offset = 0
+        while True:
+            data = fetch_with_retry(base, {
+                "dataset": dataset, "config": "default",
+                "split": split, "offset": offset, "limit": 100,
+            })
+            rows = data.get("rows", [])
+            if not rows:
+                break
+            for r in rows:
+                sentences.append(r["row"]["sentence"])
+                labels.append(r["row"]["sentiment"])
+            offset += len(rows)
+            if offset >= limit:
+                break
+
+        # Save to cache
+        with open(cache_file, "w") as f:
+            json.dump({"sentences": sentences, "labels": labels}, f)
+        return sentences, labels
+
+    def stratified_sample(sentences, labels, n, seed=42):
+        labels_arr    = np.array(labels)
+        unique_labels = np.unique(labels_arr)
+        rng           = np.random.default_rng(seed)
+        selected      = []
+        n_per_label   = n // len(unique_labels)
+        remainder     = n % len(unique_labels)
+        for i, label in enumerate(unique_labels):
+            idxs   = np.where(labels_arr == label)[0]
+            n_take = min(n_per_label + (1 if i < remainder else 0), len(idxs))
+            selected.extend(rng.choice(idxs, size=n_take, replace=False).tolist())
+        rng.shuffle(selected)
+        return selected
+
+    print(f"[INFO] {run_tag} — downloading data...")
+    train_s, train_l = fetch_split("train")
+    test_s,  test_l  = fetch_split("test", limit=2000)
+
+    idx     = stratified_sample(train_s, train_l, SAMPLE_SIZE, SEED)
+    train_s = [train_s[i] for i in idx]
+    train_l = [train_l[i] for i in idx]
+    print(f"[INFO] Train: {len(train_s)}, Test: {len(test_s)}")
+
+    # ── Load model with retry ─────────────────────────────────────────────────
+    def load_with_retry(loader_fn, max_retries=3):
+        for attempt in range(max_retries):
+            try:
+                return loader_fn()
+            except Exception as e:
+                print(f"[WARN] model load attempt {attempt+1}: {e}")
+                time.sleep(5)
+        raise RuntimeError("Failed to load model after retries")
+
+    torch.manual_seed(training_seed)
+    device    = torch.device("cpu")
+    tokenizer = load_with_retry(
+        lambda: AutoTokenizer.from_pretrained(PHOBERT_MODEL_NAME)
     )
-    val_ds = TensorDataset(
-        val_data['input_ids'],
-        val_data['attention_mask'],
-        val_data['labels'],
+
+    # ── Tokenise ──────────────────────────────────────────────────────────────
+    class SentimentDataset(TorchDataset):
+        def __init__(self, sentences, labels):
+            enc = tokenizer(
+                sentences, padding="max_length", truncation=True,
+                max_length=MAX_LENGTH, return_tensors="pt",
+            )
+            self.input_ids      = enc["input_ids"]
+            self.attention_mask = enc["attention_mask"]
+            self.labels         = torch.tensor(labels, dtype=torch.long)
+        def __len__(self):
+            return len(self.labels)
+        def __getitem__(self, idx):
+            return {
+                "input_ids"      : self.input_ids[idx],
+                "attention_mask" : self.attention_mask[idx],
+                "labels"         : self.labels[idx],
+            }
+
+    train_loader = DataLoader(
+        SentimentDataset(train_s, train_l), batch_size=batch_size, shuffle=True
+    )
+    test_loader = DataLoader(
+        SentimentDataset(test_s, test_l), batch_size=8, shuffle=False
     )
 
-    train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader   = DataLoader(val_ds,   batch_size=BATCH_SIZE)
-
-    class PhoBERTClassifier(nn.Module):
-        def __init__(self):
-            super().__init__()
-            self.phobert    = AutoModel.from_pretrained(PHOBERT_MODEL_NAME)
-            self.classifier = nn.Linear(768, NUM_LABELS)
-            self.phobert.gradient_checkpointing_enable()
-
-        def forward(self, input_ids, attention_mask):
-            out = self.phobert(input_ids=input_ids, attention_mask=attention_mask)
-            return self.classifier(out.last_hidden_state[:, 0, :])
-
-    torch.manual_seed(42)
-    device    = torch.device('cpu')
-    model     = PhoBERTClassifier().to(device)
-    optimizer = AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
-    criterion = nn.CrossEntropyLoss()
-
-    print(f"[train] epochs={EPOCHS} lr={LR} batch={BATCH_SIZE} device=cpu")
-
-    t0 = time.time()
-    avg_loss = 0.0
-    for epoch in range(EPOCHS):
-        model.train()
-        total_loss = 0
-        for input_ids, attention_mask, labels in train_loader:
-            input_ids      = input_ids.to(device)
-            attention_mask = attention_mask.to(device)
-            labels         = labels.to(device)
-            optimizer.zero_grad()
-            loss = criterion(model(input_ids, attention_mask), labels)
-            loss.backward()
-            optimizer.step()
-            total_loss += loss.item()
-
-        avg_loss = total_loss / len(train_loader)
-
-        model.eval()
-        val_loss = 0
-        with torch.no_grad():
-            for input_ids, attention_mask, labels in val_loader:
-                input_ids      = input_ids.to(device)
-                attention_mask = attention_mask.to(device)
-                labels         = labels.to(device)
-                val_loss      += criterion(model(input_ids, attention_mask), labels).item()
-
-        print(f"  Epoch {epoch+1}/{EPOCHS} — train_loss: {avg_loss:.4f}, val_loss: {val_loss/len(val_loader):.4f}")
-
-    train_time = round(time.time() - t0, 3)
-    print(f"[train] done. train_time={train_time}s")
-
-    torch.save(model.state_dict(), output_model.path)
-    output_metrics.log_metric("train_time_seconds", train_time)
-    output_metrics.log_metric("final_loss",         round(avg_loss, 4))
-
-
-@dsl.component(
-    base_image="python:3.11-slim",
-    packages_to_install=BASE_PACKAGES,
-    pip_index_urls=PIP_URLS,
-)
-def evaluate_model(
-    input_test_tok: Input[Dataset],
-    input_model:    Input[Model],
-    output_metrics: Output[Metrics],
-):
-    """Evaluate trên test set, log accuracy + F1-macro."""
-    import time
-    import torch
-    import torch.nn as nn
-    from torch.utils.data import TensorDataset, DataLoader
-    from transformers import AutoModel
-    from sklearn.metrics import accuracy_score, f1_score
-
-    PHOBERT_MODEL_NAME = "vinai/phobert-base"
-    NUM_LABELS         = 3
-    BATCH_SIZE         = 8
-
-    test_data = torch.load(input_test_tok.path)
-    test_ds   = TensorDataset(
-        test_data['input_ids'],
-        test_data['attention_mask'],
-        test_data['labels'],
+    # ── Model ─────────────────────────────────────────────────────────────────
+    model = load_with_retry(
+        lambda: AutoModelForSequenceClassification.from_pretrained(
+            PHOBERT_MODEL_NAME, num_labels=NUM_LABELS
+        ).to(device)
     )
-    test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE)
 
-    class PhoBERTClassifier(nn.Module):
-        def __init__(self):
-            super().__init__()
-            self.phobert    = AutoModel.from_pretrained(PHOBERT_MODEL_NAME)
-            self.classifier = nn.Linear(768, NUM_LABELS)
+    if GRADIENT_CHECKPOINTING:
+        model.gradient_checkpointing_enable()
 
-        def forward(self, input_ids, attention_mask):
-            out = self.phobert(input_ids=input_ids, attention_mask=attention_mask)
-            return self.classifier(out.last_hidden_state[:, 0, :])
+    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
+    total_steps = max(1, (len(train_loader) * epochs) // ACCUMULATION_STEPS)
+    scheduler   = get_linear_schedule_with_warmup(
+        optimizer,
+        num_warmup_steps   = max(1, int(0.1 * total_steps)),
+        num_training_steps = total_steps,
+    )
 
-    device = torch.device('cpu')
-    model  = PhoBERTClassifier().to(device)
-    model.load_state_dict(torch.load(input_model.path, map_location=device))
+    # ── Train ─────────────────────────────────────────────────────────────────
+    pipeline_start = time.time()
+    train_start    = time.time()
+    model.train()
+
+    for _ in range(epochs):
+        optimizer.zero_grad()
+        for step, batch in enumerate(train_loader):
+            outputs = model(
+                input_ids      = batch["input_ids"].to(device),
+                attention_mask = batch["attention_mask"].to(device),
+                labels         = batch["labels"].to(device),
+            )
+            (outputs.loss / ACCUMULATION_STEPS).backward()
+            if (step + 1) % ACCUMULATION_STEPS == 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad()
+
+    train_time = time.time() - train_start
+
+    # ── Evaluate ──────────────────────────────────────────────────────────────
+    eval_start = time.time()
     model.eval()
-
     all_preds, all_labels = [], []
-    t0 = time.time()
+    correct = total = 0
+
     with torch.no_grad():
-        for input_ids, attention_mask, labels in test_loader:
-            preds = model(input_ids.to(device), attention_mask.to(device)).argmax(dim=1).cpu()
-            all_preds.extend(preds.numpy())
-            all_labels.extend(labels.numpy())
+        for batch in test_loader:
+            outputs = model(
+                input_ids      = batch["input_ids"].to(device),
+                attention_mask = batch["attention_mask"].to(device),
+            )
+            preds   = outputs.logits.argmax(dim=1)
+            labels  = batch["labels"].to(device)
+            correct += (preds == labels).sum().item()
+            total   += labels.size(0)
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
 
-    eval_time = round(time.time() - t0, 3)
-    accuracy  = round(accuracy_score(all_labels, all_preds) * 100, 4)
-    f1        = round(f1_score(all_labels, all_preds, average='macro') * 100, 4)
+    eval_time     = time.time() - eval_start
+    pipeline_time = time.time() - pipeline_start
 
-    print(f"[evaluate] Accuracy:  {accuracy:.4f}%")
-    print(f"[evaluate] F1-macro:  {f1:.4f}%")
-    print(f"[evaluate] Eval time: {eval_time}s")
-
-    output_metrics.log_metric("accuracy",          accuracy)
-    output_metrics.log_metric("f1_macro",          f1)
-    output_metrics.log_metric("eval_time_seconds", eval_time)
+    result = {
+        "run_id"          : run_tag,
+        "lr"              : lr,
+        "batch_size"      : batch_size,
+        "epochs"          : epochs,
+        "training_seed"   : training_seed,
+        "accuracy"        : round(correct / total, 6),
+        "f1_macro"        : round(f1_score(all_labels, all_preds, average="macro"), 6),
+        "train_time_s"    : round(train_time, 4),
+        "eval_time_s"     : round(eval_time, 4),
+        "pipeline_time_s" : round(pipeline_time, 4),
+    }
+    print("CSV_ROW:" + ",".join(str(result[k]) for k in [
+        "run_id", "lr", "batch_size", "training_seed",
+        "accuracy", "f1_macro", "train_time_s", "eval_time_s", "pipeline_time_s",
+    ]))
+    print(json.dumps(result, indent=2))
+    return json.dumps(result)
 
 
 @dsl.pipeline(
-    name="phobert-sentiment-kubeflow",
-    description="UC2 PhoBERT fine-tune — UIT-VSFC full, 3 epochs, CPU",
+    name        = "Vietnamese Sentiment — KFP UC2",
+    description = "6 runs: 3 baseline + 3 TC2 sweep. 500 stratified samples, SEED=42.",
 )
-def phobert_pipeline():
-    load_task = load_data()
-    load_task.set_memory_limit("4Gi")
-    load_task.set_cpu_limit("2")
-    load_task.set_caching_options(enable_caching=False)
+def sentiment_pipeline():
+    HPARAMS     = {"lr": 2e-5, "batch_size": 2, "epochs": 3}
+    NUM_RUNS    = 3
+    TC2_CONFIGS = [
+        {"lr": 1e-5, "batch_size": 2, "epochs": 3},
+        {"lr": 2e-5, "batch_size": 2, "epochs": 3},
+        {"lr": 3e-5, "batch_size": 4, "epochs": 3},
+    ]
 
-    prep_task = preprocess(
-        input_train=load_task.outputs["output_train"],
-        input_val=load_task.outputs["output_val"],
-        input_test=load_task.outputs["output_test"],
-    )
-    prep_task.set_memory_limit("8Gi")
-    prep_task.set_cpu_limit("2")
-    prep_task.set_caching_options(enable_caching=False)
-    prep_task.after(load_task)
+    prev_task = None
 
-    train_task = train_model(
-        input_train_tok=prep_task.outputs["output_train_tok"],
-        input_val_tok=prep_task.outputs["output_val_tok"],
-    )
-    train_task.set_memory_limit("12Gi")
-    train_task.set_cpu_limit("4")
-    train_task.set_caching_options(enable_caching=False)
-    train_task.after(prep_task)
+    BASELINE_SEEDS = [43, 44, 45]
 
-    eval_task = evaluate_model(
-        input_test_tok=prep_task.outputs["output_test_tok"],
-        input_model=train_task.outputs["output_model"],
-    )
-    eval_task.set_memory_limit("8Gi")
-    eval_task.set_cpu_limit("2")
-    eval_task.set_caching_options(enable_caching=False)
-    eval_task.after(train_task)
+    for run_idx in range(1, NUM_RUNS + 1):
+        run_tag = f"baseline_run{run_idx}"
+        task = traineval(
+            lr=HPARAMS["lr"],
+            batch_size=HPARAMS["batch_size"],
+            epochs=HPARAMS["epochs"],
+            run_tag=run_tag,
+            training_seed=BASELINE_SEEDS[run_idx - 1],
+        )
+        task.set_caching_options(enable_caching=False)
+        task.set_memory_limit("8G")
+        task.set_cpu_limit("2")
+        task.set_display_name(run_tag)
+        if prev_task is not None:
+            task.after(prev_task)
+        prev_task = task
+
+    for sweep_idx, cfg in enumerate(TC2_CONFIGS, start=1):
+        run_tag = f"sweep{sweep_idx}"
+        task = traineval(
+            lr=cfg["lr"],
+            batch_size=cfg["batch_size"],
+            epochs=cfg["epochs"],
+            run_tag=run_tag,
+            training_seed=42,
+        )
+        task.set_caching_options(enable_caching=False)
+        task.set_memory_limit("8G")
+        task.set_cpu_limit("2")
+        task.set_display_name(run_tag)
+        task.after(prev_task)
+        prev_task = task
 
 
 if __name__ == "__main__":
-    compiler.Compiler().compile(
-        pipeline_func=phobert_pipeline,
-        package_path="phobert_pipeline.yaml",
+    import kfp
+
+    PIPELINE_YAML = "/home/ubuntu/mlops-thesis/kubeflow/sentiment_pipeline.yaml"
+    KFP_HOST      = "http://localhost:8888"
+
+    kfp.compiler.Compiler().compile(sentiment_pipeline, PIPELINE_YAML)
+    print(f"[INFO] Compiled → {PIPELINE_YAML}")
+
+    client = Client(host=KFP_HOST)
+    run = client.create_run_from_pipeline_func(
+        pipeline_func  = sentiment_pipeline,
+        run_name       = "UC2-Sentiment-6runs",
+        enable_caching = False,
     )
-    print("Compiled: phobert_pipeline.yaml")
+    print(f"[INFO] Submitted → run_id: {run.run_id}")
