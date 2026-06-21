@@ -195,7 +195,7 @@ def mnist_pipeline():
 if __name__ == "__main__":
     import kfp
 
-    PIPELINE_YAML = "/home/ubuntu/mlops-thesis/kubeflow/mnist_pipeline.yaml"
+    PIPELINE_YAML = "mnist_pipeline.yaml"
     KFP_HOST      = "http://localhost:8888"
 
     kfp.compiler.Compiler().compile(mnist_pipeline, PIPELINE_YAML)
