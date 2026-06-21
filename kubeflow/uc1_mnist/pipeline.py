@@ -194,12 +194,16 @@ def mnist_pipeline():
 
 if __name__ == "__main__":
     import kfp
+    import os
 
     PIPELINE_YAML = "mnist_pipeline.yaml"
     KFP_HOST      = "http://localhost:8888"
 
     kfp.compiler.Compiler().compile(mnist_pipeline, PIPELINE_YAML)
     print(f"[INFO] Compiled → {PIPELINE_YAML}")
+
+    if os.getenv("GITHUB_ACTIONS"):
+        raise SystemExit(0)
 
     client = Client(host=KFP_HOST)
     run = client.create_run_from_pipeline_func(
